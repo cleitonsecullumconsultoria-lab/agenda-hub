@@ -389,10 +389,14 @@ function mSVG(){ return '<svg width="18" height="18" viewBox="0 0 23 23"><path f
 // ── STATE ─────────────────────────────────────────────────
 var TD    = new Date();
 var calM  = new Date(TD.getFullYear(), TD.getMonth(), 1);
-var conn  = JSON.parse(localStorage.getItem('csh_conn')  || '{}');
-var ctog  = JSON.parse(localStorage.getItem('csh_ctog')  || '{}');
-var evs   = JSON.parse(localStorage.getItem('csh_evs')   || 'null') || defEvs();
-var pend  = JSON.parse(localStorage.getItem('csh_pend')  || 'null') || defPend();
+function safeGet(key, fallback){
+  try{ var v = JSON.parse(localStorage.getItem(key)); return (v && typeof v === 'object') ? v : fallback; }
+  catch(e){ return fallback; }
+}
+var conn  = safeGet('csh_conn', {});
+var ctog  = safeGet('csh_ctog', {});
+var evs   = safeGet('csh_evs',  null) || defEvs();
+var pend  = safeGet('csh_pend', null) || defPend();
 
 var MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 var WDAYS  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
