@@ -830,24 +830,20 @@ function oauthMicrosoft(accId){
   const url=`https://login.microsoftonline.com/${CONFIG.MICROSOFT_TENANT}/oauth2/v2.0/authorize?client_id=${CONFIG.MICROSOFT_CLIENT_ID}&response_type=token&redirect_uri=${redir}&scope=${scopes}&login_hint=${encodeURIComponent(a.email)}&state=${state}`;
   localStorage.setItem('csh_pending_acc',accId);
   const popup=window.open(url,'oauth_popup','width=520,height=640,left=400,top=100');
+  // postMessage listener handles the token - just watch for popup close as fallback
   const timer=setInterval(()=>{
-    try{
-      if(!popup||popup.closed){
-        clearInterval(timer);
-        const stored=localStorage.getItem('csh_oauth_token_tmp');
-        if(stored){ localStorage.removeItem('csh_oauth_token_tmp'); processToken('#'+stored,accId); }
-        return;
+    if(!popup||popup.closed){
+      clearInterval(timer);
+      // Check if token arrived via localStorage (fallback)
+      const stored=localStorage.getItem('csh_oauth_token_tmp');
+      if(stored){
+        localStorage.removeItem('csh_oauth_token_tmp');
+        try{
+          const obj=JSON.parse(stored);
+          processToken('#'+obj.hash, obj.accId||accId);
+        }catch(e){ processToken('#'+stored, accId); }
       }
-      try{
-        const h=popup.location.hash||'';
-        if(h.includes('access_token')){
-          clearInterval(timer);
-          localStorage.setItem('csh_oauth_token_tmp', h.slice(1));
-          popup.close();
-          processToken(h,accId);
-        }
-      }catch(cross){}
-    }catch(e){}
+    }
   },400);
 }
 
@@ -863,21 +859,34 @@ function processToken(hash, forcedAccId){
     localStorage.removeItem('csh_pending_acc');
     save();
     const a=CONFIG.ACCOUNTS.find(x=>x.id===accId);
-    toast(`${a?a.label:'Conta'} conectada com sucesso!`,'ok');
-    buildSb();renderToday();
-    if(document.getElementById('view-integracoes').classList.contains('active')) renderInt();
+    // Only update UI if state is already initialized
+    if(typeof evs !== 'undefined' && evs !== null){
+      toast(`${a?a.label:'Conta'} conectada com sucesso!`,'ok');
+      buildSb();renderToday();
+      if(document.getElementById('view-integracoes').classList.contains('active')) renderInt();
+    }
   }
 }
 
 function handleRedirect(){
   const hash=location.hash;
   if(!hash||!hash.includes('access_token')) return;
-  // Running as popup redirect - save token and close
+  // Running as popup redirect - save token to localStorage and close popup
   if(window.opener && !window.opener.closed){
-    localStorage.setItem('csh_oauth_token_tmp', hash.slice(1));
+    try{
+      // Parse accId from state to pass back
+      const params={};
+      hash.replace(/^#/,'').split('&').forEach(p=>{const[k,...v]=p.split('=');params[k]=decodeURIComponent(v.join('=')||'');});
+      let accId=null;
+      if(params.state){try{accId=JSON.parse(params.state).accId;}catch(e){}}
+      accId=accId||localStorage.getItem('csh_pending_acc');
+      localStorage.setItem('csh_oauth_token_tmp', JSON.stringify({hash:hash.slice(1),accId}));
+      window.opener.postMessage({type:'oauth_token',hash:hash.slice(1),accId},'*');
+    }catch(e){}
     window.close();
     return;
   }
+  // Main window received token directly (same-page redirect)
   processToken(hash, null);
   history.replaceState(null,'',location.pathname);
 }
@@ -990,6 +999,13 @@ function gSVG(){return'<svg width="18" height="18" viewBox="0 0 48 48"><path fil
 function mSVG(){return'<svg width="18" height="18" viewBox="0 0 23 23"><path fill="#f35325" d="M1 1h10v10H1z"/><path fill="#81bc06" d="M12 1h10v10H12z"/><path fill="#05a6f0" d="M1 12h10v10H1z"/><path fill="#ffba08" d="M12 12h10v10H12z"/></svg>';}
 
 /* ─ INIT ─────────────────────────────── */
+// Listen for OAuth token from popup
+window.addEventListener('message', function(e){
+  if(e.data && e.data.type==='oauth_token'){
+    processToken('#'+e.data.hash, e.data.accId);
+  }
+});
+
 handleRedirect();
 buildSb();
 buildSelects();
