@@ -536,11 +536,11 @@ function mSVG(){return '<svg width="18" height="18" viewBox="0 0 23 23"><path fi
 
 /* ─ STATE ────────────────────────────── */
 const TD = new Date();
-let calM = new Date(TD.getFullYear(), TD.getMonth(), 1);
-let conn = JSON.parse(localStorage.getItem('csh_conn')||'{}');
-let evs  = JSON.parse(localStorage.getItem('csh_evs')||'null') || defEvs();
-let pend = JSON.parse(localStorage.getItem('csh_pend')||'null') || defPend();
-let ctog = JSON.parse(localStorage.getItem('csh_ctog')||'{}');
+var calM = new Date(TD.getFullYear(), TD.getMonth(), 1);
+var conn = JSON.parse(localStorage.getItem('csh_conn')||'{}');
+var evs  = JSON.parse(localStorage.getItem('csh_evs')||'null') || defEvs();
+var pend = JSON.parse(localStorage.getItem('csh_pend')||'null') || defPend();
+var ctog = JSON.parse(localStorage.getItem('csh_ctog')||'{}');
 
 function save(){
   localStorage.setItem('csh_conn', JSON.stringify(conn));
@@ -998,7 +998,7 @@ function gSVG(){return'<svg width="18" height="18" viewBox="0 0 48 48"><path fil
 function mSVG(){return'<svg width="18" height="18" viewBox="0 0 23 23"><path fill="#f35325" d="M1 1h10v10H1z"/><path fill="#81bc06" d="M12 1h10v10H12z"/><path fill="#05a6f0" d="M1 12h10v10H1z"/><path fill="#ffba08" d="M12 12h10v10H12z"/></svg>';}
 
 /* ─ INIT ─────────────────────────────── */
-let APP_READY = false;
+var APP_READY = false;
 
 // Listen for OAuth token from popup - only process after app is initialized
 window.addEventListener('message', function(e){
