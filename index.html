@@ -5,75 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Cleiton - Secullum | Agenda Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-<!--
-  ═══════════════════════════════════════════════════
-  CLEITON - SECULLUM | AGENDA HUB
-  ═══════════════════════════════════════════════════
-
-  COMO ATIVAR OAUTH REAL:
-  ──────────────────────────────────────────────────
-
-  GOOGLE (conta souagrosolucoes.com.br):
-  1. Acesse: https://console.cloud.google.com
-  2. Crie projeto > ative "Google Calendar API" + "Gmail API"
-  3. Credenciais > Criar > OAuth 2.0 > Aplicativo da Web
-  4. Origens autorizadas: http://localhost  (ou seu domínio)
-  5. Cole o Client ID na variável GOOGLE_CLIENT_ID abaixo
-
-  MICROSOFT (secullumcontabilidade + gruporotaoeste):
-  1. Acesse: https://portal.azure.com
-  2. Microsoft Entra ID > Registros de aplicativos > Novo
-  3. Tipo: "Contas em qualquer diretório + pessoais"
-  4. URI de redirecionamento: Web > http://localhost
-  5. Permissões de API > Microsoft Graph > adicione:
-     Calendars.Read  Mail.Read  offline_access  User.Read
-  6. Cole o Application (Client) ID na variável abaixo
-
-  ═══════════════════════════════════════════════════
--->
-
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
-const CONFIG = {
-  GOOGLE_CLIENT_ID:    '961137556992-utnc2a3qh89m7fh12fnesifhu76ir8r7.apps.googleusercontent.com',
+var CONFIG = {
+  GOOGLE_CLIENT_ID: '961137556992-utnc2a3qh89m7fh12fnesifhu76ir8r7.apps.googleusercontent.com',
   MICROSOFT_CLIENT_ID: 'SEU_MICROSOFT_CLIENT_ID_AQUI',
-  MICROSOFT_TENANT:    'common',
-
+  MICROSOFT_TENANT: 'common',
+  REDIRECT_URI: 'https://cleitonsecullumconsultoria-lab.github.io/agenda-hub/',
   ACCOUNTS: [
-    {
-      id:        'secullum',
-      label:     'Secullum',
-      email:     'cleiton.trajano@secullumcontabilidade.com.br',
-      provider:  'microsoft',
-      color:     '#4f80ff',
-      soft:      'rgba(79,128,255,0.13)',
-      initials:  'CS'
-    },
-    {
-      id:        'souagro',
-      label:     'SOU Agro',
-      email:     'cleiton.trajano@souagrosolucoes.com.br',
-      provider:  'microsoft',
-      color:     '#34c97a',
-      soft:      'rgba(52,201,122,0.13)',
-      initials:  'SA'
-    },
-    {
-      id:        'rotaoeste',
-      label:     'Rota Oeste',
-      email:     'cleiton.barroso@gruporotaoeste.com.br',
-      provider:  'google',
-      color:     '#f5a623',
-      soft:      'rgba(245,166,35,0.13)',
-      initials:  'RO'
-    }
+    { id:'secullum', label:'Secullum',   email:'cleiton.trajano@secullumcontabilidade.com.br', provider:'microsoft', color:'#2d5bcc', soft:'rgba(45,91,204,0.10)', initials:'CS' },
+    { id:'souagro',  label:'SOU Agro',   email:'cleiton.trajano@souagrosolucoes.com.br',        provider:'microsoft', color:'#1a9e5a', soft:'rgba(26,158,90,0.10)',  initials:'SA' },
+    { id:'rotaoeste',label:'Rota Oeste', email:'cleiton.barroso@gruporotaoeste.com.br',         provider:'google',    color:'#c47d0a', soft:'rgba(196,125,10,0.10)', initials:'RO' }
   ]
 };
 </script>
-
 <style>
-/* ─ RESET ─────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   --bg:#f0f2f7;--bg2:#ffffff;--bg3:#f5f6fa;--bg4:#eceef5;--bg5:#e4e7f0;
@@ -83,75 +29,57 @@ const CONFIG = {
   --green:#1a9e5a;--gs:rgba(26,158,90,0.10);
   --amber:#c47d0a;--as:rgba(196,125,10,0.10);
   --red:#d63030;--rs:rgba(214,48,48,0.10);
-  --r:9px;--rl:13px;--rx:20px;
+  --r:9px;--rl:13px;--rx:18px;
   --ff:'DM Sans',sans-serif;--fh:'Syne',sans-serif;--fm:'DM Mono',monospace;
   --sw:244px;--th:54px;
-  --sh:0 4px 20px rgba(0,0,0,0.12);
-  --tr:all 0.17s cubic-bezier(.4,0,.2,1);
+  --sh:0 2px 12px rgba(0,0,0,0.10);
 }
 html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);font-size:14px;line-height:1.5;overflow:hidden}
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--bd3);border-radius:2px}
-::selection{background:var(--bs);color:var(--t)}
-
-/* ─ LAYOUT ───────────────────────────── */
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
 .app{display:flex;height:100vh}
 
-/* ─ SIDEBAR ──────────────────────────── */
-.sb{
-  width:var(--sw);min-width:var(--sw);
-  background:var(--bg2);border-right:1px solid var(--bd);
-  display:flex;flex-direction:column;height:100vh;
-  z-index:200;transition:transform .25s cubic-bezier(.4,0,.2,1);
-}
-.sb-logo{padding:17px 17px 14px;border-bottom:1px solid var(--bd);flex-shrink:0}
-.sb-brand{font-family:var(--fh);font-size:13px;font-weight:700;color:var(--t);display:flex;align-items:center;gap:9px}
+/* SIDEBAR */
+.sb{width:var(--sw);min-width:var(--sw);background:var(--bg2);border-right:1px solid var(--bd);display:flex;flex-direction:column;height:100vh;z-index:200;transition:transform .25s ease}
+.sb-logo{padding:16px 17px 13px;border-bottom:1px solid var(--bd)}
+.sb-brand{font-family:var(--fh);font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
 .sb-pip{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0;box-shadow:0 0 8px rgba(45,91,204,.4)}
 .sb-sub{font-size:11px;color:var(--t3);margin-top:3px}
 .sb-scroll{flex:1;overflow-y:auto;padding:6px 0}
 .sb-sec{font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;padding:13px 17px 4px}
-.ni{
-  display:flex;align-items:center;gap:9px;padding:9px 17px;cursor:pointer;
-  color:var(--t2);font-size:13px;transition:var(--tr);border-left:2px solid transparent;
-}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 17px;cursor:pointer;color:var(--t2);font-size:13px;transition:all .15s;border-left:2px solid transparent}
 .ni:hover{color:var(--t);background:var(--bg3)}
 .ni.active{color:var(--t);background:var(--bs);border-left-color:var(--blue)}
-.ni svg{width:15px;height:15px;flex-shrink:0;opacity:.6;transition:opacity .15s}
+.ni svg{width:15px;height:15px;flex-shrink:0;opacity:.5}
 .ni:hover svg,.ni.active svg{opacity:1}
 .ni.active svg{color:var(--blue)}
 .nbadge{margin-left:auto;font-size:10px;background:var(--blue);color:#fff;padding:1px 6px;border-radius:10px;font-weight:600}
-.acc-row{display:flex;align-items:center;gap:8px;padding:6px 17px;font-size:12px;color:var(--t2);cursor:pointer;transition:var(--tr)}
+.acc-row{display:flex;align-items:center;gap:8px;padding:6px 17px;font-size:12px;color:var(--t2);cursor:pointer;transition:background .15s}
 .acc-row:hover{background:var(--bg3)}
 .av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0;font-family:var(--fh)}
 .acc-label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.sdot.on{background:var(--green);box-shadow:0 0 5px rgba(52,201,122,.7)}
+.sdot.on{background:var(--green)}
 .sdot.off{background:var(--bd3)}
-.tog{width:28px;height:15px;border-radius:8px;background:var(--bg5);border:1px solid var(--bd2);position:relative;cursor:pointer;transition:var(--tr);flex-shrink:0}
+.tog{width:28px;height:15px;border-radius:8px;background:var(--bg5);border:1px solid var(--bd2);position:relative;cursor:pointer;transition:all .15s;flex-shrink:0}
 .tog.on{background:var(--blue);border-color:var(--blue)}
-.tog::after{content:'';position:absolute;width:11px;height:11px;background:#fff;border-radius:50%;top:1px;left:1px;transition:left .18s}
+.tog::after{content:'';position:absolute;width:11px;height:11px;background:#fff;border-radius:50%;top:1px;left:1px;transition:left .15s}
 .tog.on::after{left:14px}
-.sb-foot{padding:12px 17px;border-top:1px solid var(--bd);flex-shrink:0}
-.sf-txt{font-size:11px;color:var(--t3);display:flex;align-items:center;gap:6px}
+.sb-foot{padding:12px 17px;border-top:1px solid var(--bd);font-size:11px;color:var(--t3);display:flex;align-items:center;gap:6px}
 .sf-dot{width:5px;height:5px;border-radius:50%;background:var(--green)}
 
-/* ─ TOPBAR ───────────────────────────── */
-.topbar{
-  height:var(--th);background:var(--bg2);border-bottom:1px solid var(--bd);
-  display:flex;align-items:center;gap:10px;padding:0 20px;flex-shrink:0;
-}
+/* TOPBAR */
+.topbar{height:var(--th);background:var(--bg2);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;padding:0 20px;flex-shrink:0}
 .tt{font-family:var(--fh);font-size:14px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tt span{font-size:12px;color:var(--t2);font-weight:400;font-family:var(--ff);margin-left:5px}
-.mbtn{display:none;background:none;border:none;color:var(--t2);cursor:pointer;padding:6px;border-radius:var(--r);transition:var(--tr)}
-.mbtn:hover{background:var(--bg4);color:var(--t)}
+.mbtn{display:none;background:none;border:none;color:var(--t2);cursor:pointer;padding:6px;border-radius:var(--r)}
+.mbtn:hover{background:var(--bg4)}
 
-/* ─ RESPONSIVE ───────────────────────── */
+/* RESPONSIVE */
 @media(max-width:768px){
   .mbtn{display:flex;align-items:center;justify-content:center}
   .sb{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%)}
   .sb.open{transform:translateX(0);box-shadow:var(--sh)}
-  .ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:190;display:none}
+  .ov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:190;display:none}
   .ov.show{display:block}
   .main{width:100%;min-width:0}
 }
@@ -159,17 +87,12 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
   .stats{grid-template-columns:1fr 1fr!important}
   .stats .stat:last-child{grid-column:1/-1}
   .g2{grid-template-columns:1fr!important}
-  .topbar{padding:0 13px}
   .view{padding:13px}
+  .topbar{padding:0 13px}
 }
 
-/* ─ BUTTONS ──────────────────────────── */
-.btn{
-  display:inline-flex;align-items:center;gap:6px;padding:7px 13px;
-  border-radius:var(--r);font-size:12px;font-weight:500;cursor:pointer;
-  border:1px solid var(--bd2);background:var(--bg3);color:var(--t);
-  font-family:var(--ff);transition:var(--tr);white-space:nowrap;
-}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:var(--r);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--bd2);background:var(--bg3);color:var(--t);font-family:var(--ff);transition:all .15s;white-space:nowrap}
 .btn:hover{background:var(--bg4);border-color:var(--bd3)}
 .btn:active{transform:scale(.97)}
 .btn svg{width:14px;height:14px;flex-shrink:0}
@@ -177,72 +100,70 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
 .btn.pri:hover{background:var(--blue2);border-color:var(--blue2)}
 .btn.sm{padding:5px 10px;font-size:11px}
 .btn.danger{background:var(--rs);border-color:var(--red);color:var(--red)}
-.ibt{background:none;border:none;cursor:pointer;color:var(--t3);padding:5px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;transition:var(--tr)}
+.ibt{background:none;border:none;cursor:pointer;color:var(--t3);padding:5px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;transition:all .15s}
 .ibt:hover{background:var(--bg4);color:var(--t)}
 .ibt svg{width:15px;height:15px}
 
-/* ─ MAIN ─────────────────────────────── */
+/* LAYOUT */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 .view{flex:1;overflow-y:auto;padding:20px;display:none}
 .view.active{display:block}
 
-/* ─ STATS ────────────────────────────── */
+/* STATS */
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-.stat{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 15px;transition:var(--tr)}
-.stat:hover{border-color:var(--bd2)}
+.stat{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 15px}
 .sn{font-size:26px;font-weight:600;font-family:var(--fm);letter-spacing:-.03em;line-height:1}
 .sl{font-size:10px;color:var(--t3);margin-top:4px;text-transform:uppercase;letter-spacing:.07em}
 .stat.blue .sn{color:var(--blue)}
 .stat.green .sn{color:var(--green)}
 .stat.red .sn{color:var(--red)}
 
-/* ─ GRID & CARD ──────────────────────── */
+/* GRID & CARD */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:16px 18px}
 .ch{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
-.ch svg{width:13px;height:13px}
 .mb16{margin-bottom:16px}
 
-/* ─ EVENTS ───────────────────────────── */
+/* EVENTS */
 .ev{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--bd)}
 .ev:last-child{border:none;padding-bottom:0}
 .ev-t{font-size:11px;color:var(--t3);font-family:var(--fm);min-width:42px;padding-top:2px;flex-shrink:0}
 .ev-bar{width:2px;border-radius:2px;flex-shrink:0;align-self:stretch;min-height:18px;margin-top:3px}
-.ev-b{flex:1;min-width:0}
+.ev-body{flex:1;min-width:0}
 .ev-title{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ev-meta{display:flex;align-items:center;gap:5px;margin-top:3px;flex-wrap:wrap}
 .esrc{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600}
 .eloc{font-size:11px;color:var(--t3)}
 
-/* ─ PENDING ──────────────────────────── */
+/* PENDING */
 .pi{display:flex;align-items:flex-start;gap:9px;padding:10px 0;border-bottom:1px solid var(--bd)}
 .pi:last-child{border:none;padding-bottom:0}
 .pi input[type=checkbox]{width:15px;height:15px;accent-color:var(--blue);cursor:pointer;margin-top:2px;flex-shrink:0}
-.pi-b{flex:1;min-width:0}
+.pi-body{flex:1;min-width:0}
 .pit{font-size:13px;line-height:1.4}
 .pit.done{text-decoration:line-through;color:var(--t3)}
 .pim{display:flex;align-items:center;gap:5px;margin-top:4px;flex-wrap:wrap}
 .tag{font-size:9px;padding:2px 7px;border-radius:4px;font-weight:600}
-.tag.alta{background:var(--rs);color:#b02020}
-.tag.media{background:var(--as);color:#a06010}
-.tag.baixa{background:var(--gs);color:#157a45}
+.tag.alta{background:var(--rs);color:var(--red)}
+.tag.media{background:var(--as);color:var(--amber)}
+.tag.baixa{background:var(--gs);color:var(--green)}
 .tag.cat{background:var(--bg4);color:var(--t2)}
 .pidate{font-size:11px;color:var(--t3);font-family:var(--fm)}
 
-/* ─ FORM ─────────────────────────────── */
-.add-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-start}
-.fi{flex:1;min-width:100px;padding:8px 11px;border:1px solid var(--bd);border-radius:var(--r);font-size:12px;background:var(--bg3);color:var(--t);font-family:var(--ff);transition:var(--tr);outline:none}
+/* FORM */
+.add-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.fi{flex:1;min-width:100px;padding:8px 11px;border:1px solid var(--bd);border-radius:var(--r);font-size:12px;background:var(--bg3);color:var(--t);font-family:var(--ff);transition:border .15s;outline:none}
 .fi::placeholder{color:var(--t3)}
-.fi:focus{border-color:var(--blue);background:var(--bg4)}
-.fi option{background:var(--bg3)}
+.fi:focus{border-color:var(--blue);background:var(--bg2)}
+.fi option{background:var(--bg2)}
 .fi.wide{flex:3;min-width:200px}
 
-/* ─ CALENDAR ─────────────────────────── */
+/* CALENDAR */
 .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .cal-nav h4{font-family:var(--fh);font-size:14px;font-weight:600}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
 .cal-hd{text-align:center;font-size:9px;color:var(--t3);font-weight:600;padding:3px 0;text-transform:uppercase;letter-spacing:.06em}
-.cd{text-align:center;padding:5px 2px;font-size:12px;border-radius:7px;cursor:pointer;min-height:31px;transition:var(--tr);position:relative}
+.cd{text-align:center;padding:5px 2px;font-size:12px;border-radius:7px;cursor:pointer;min-height:31px;transition:background .15s}
 .cd:hover{background:var(--bg4)}
 .cd.today{background:var(--blue);color:#fff;font-weight:600}
 .cd.om{color:var(--t3)}
@@ -250,8 +171,8 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
 .cd .dts span{width:3px;height:3px;border-radius:50%;display:block}
 .cd.today .dts span{background:rgba(255,255,255,.6)!important}
 
-/* ─ INTEGRATION CARDS ────────────────── */
-.ic{border:1px solid var(--bd);border-radius:var(--rl);padding:14px 16px;margin-bottom:10px;transition:var(--tr)}
+/* INTEGRATIONS */
+.ic{border:1px solid var(--bd);border-radius:var(--rl);padding:14px 16px;margin-bottom:10px;transition:all .15s}
 .ic:hover{border-color:var(--bd2);background:var(--bg3)}
 .ic-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
 .ic-icon{width:40px;height:40px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -260,63 +181,52 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
 .pill{font-size:10px;padding:3px 9px;border-radius:10px;font-weight:600;white-space:nowrap}
 .pill.conn{background:var(--gs);color:var(--green)}
 .pill.disc{background:var(--bg5);color:var(--t3)}
-.ic-actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
 
-/* ─ MODALS ───────────────────────────── */
-.mbg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
+/* MODAL */
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
 .mbg.show{display:flex}
-.mbox{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rx);padding:26px;max-width:430px;width:100%;box-shadow:var(--sh);animation:fup .2s ease;position:relative}
-@keyframes fup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.mbox{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rx);padding:26px;max-width:430px;width:100%;box-shadow:var(--sh);animation:fup .18s ease;position:relative}
+@keyframes fup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .mbox h3{font-family:var(--fh);font-size:17px;font-weight:700;margin-bottom:6px}
 .mbox p{font-size:13px;color:var(--t2);margin-bottom:18px;line-height:1.65}
 .mclose{position:absolute;top:14px;right:14px}
-.oauth-btn{display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:var(--r);border:1px solid var(--bd);background:var(--bg3);cursor:pointer;font-size:13px;font-weight:500;color:var(--t);font-family:var(--ff);transition:var(--tr);width:100%;margin-bottom:9px}
+.oauth-btn{display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:var(--r);border:1px solid var(--bd);background:var(--bg3);cursor:pointer;font-size:13px;font-weight:500;color:var(--t);font-family:var(--ff);transition:all .15s;width:100%;margin-bottom:9px}
 .oauth-btn:hover{border-color:var(--bd3);background:var(--bg4)}
-.oauth-btn:active{transform:scale(.98)}
 .oauth-btn svg{width:22px;height:22px;flex-shrink:0}
-.oauth-note{font-size:11px;color:var(--t3);padding:10px 12px;background:var(--bg3);border-radius:var(--r);margin-top:6px;line-height:1.7;border-left:2px solid var(--bd3)}
 
-/* ─ SETUP STEPS ─────────────────────── */
-.step{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--bd)}
-.step:last-child{border:none}
-.stepn{width:22px;height:22px;border-radius:50%;background:var(--bs);border:1px solid var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--blue);flex-shrink:0;font-family:var(--fm)}
-.step-b{flex:1}
-.step-t{font-size:13px;font-weight:500;margin-bottom:3px}
-.step-d{font-size:12px;color:var(--t2);line-height:1.65}
-.step-d a{color:var(--blue);text-decoration:none}
-.step-d a:hover{text-decoration:underline}
-.code{font-family:var(--fm);font-size:11px;background:var(--bg3);border:1px solid var(--bd);border-radius:6px;padding:7px 10px;margin-top:6px;color:var(--amber);white-space:pre-wrap;word-break:break-all;line-height:1.6}
-
-/* ─ SETTINGS ROWS ───────────────────── */
+/* SETTINGS */
 .srow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--bd)}
 .srow:last-child{border:none}
 .slbl{font-size:13px;font-weight:500}
 .sdesc{font-size:11px;color:var(--t3);margin-top:2px}
 
-/* ─ TOAST ────────────────────────────── */
-.toast{position:fixed;bottom:20px;right:20px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:11px 15px;font-size:13px;color:var(--t);box-shadow:var(--sh);z-index:600;transform:translateY(16px);opacity:0;transition:var(--tr);max-width:320px;pointer-events:none}
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:11px 15px;font-size:13px;color:var(--t);box-shadow:var(--sh);z-index:600;transform:translateY(16px);opacity:0;transition:all .2s;max-width:320px;pointer-events:none}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.ok{border-left:3px solid var(--green)}
 .toast.info{border-left:3px solid var(--blue)}
 .toast.warn{border-left:3px solid var(--amber)}
 
-/* ─ EMPTY ────────────────────────────── */
+/* EMPTY */
 .empty{text-align:center;padding:28px 12px;color:var(--t3);font-size:13px}
 .empty svg{width:26px;height:26px;margin:0 auto 10px;display:block;opacity:.2}
 
-/* ─ MISC ─────────────────────────────── */
-.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+/* URI HELPER */
+.uri-box{background:#fffbeb;border:1px solid var(--amber);border-radius:var(--rl);padding:13px 16px;margin-bottom:12px}
+.uri-box .uri-lbl{font-size:10px;font-weight:600;color:var(--amber);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.uri-box .uri-row{display:flex;align-items:center;gap:8px}
+.uri-box code{font-family:var(--fm);font-size:11px;color:var(--t);background:var(--bg3);padding:6px 10px;border-radius:6px;flex:1;word-break:break-all}
+.uri-box .uri-note{font-size:11px;color:var(--amber);margin-top:7px}
+
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinning{animation:spin 1s linear infinite;display:inline-block}
 </style>
 </head>
 <body>
-
 <div class="ov" id="ov" onclick="closeSb()"></div>
-
 <div class="app">
 
-<!-- ══════════ SIDEBAR ══════════════════ -->
+<!-- SIDEBAR -->
 <aside class="sb" id="sb">
   <div class="sb-logo">
     <div class="sb-brand"><div class="sb-pip"></div>Cleiton - Secullum</div>
@@ -339,34 +249,24 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
       Integrações
     </div>
-    <div class="ni" onclick="go('guia')" id="nav-guia">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      Guia de Configuração
-    </div>
-
     <div class="sb-sec">Contas</div>
     <div id="acc-sb"></div>
-
-    <div class="sb-sec">Calendários ativos</div>
+    <div class="sb-sec">Calendários</div>
     <div id="cal-togs"></div>
   </div>
-  <div class="sb-foot"><div class="sf-txt" id="sf-txt"><span class="sf-dot"></span>Pronto</div></div>
+  <div class="sb-foot" id="sf-txt"><span class="sf-dot"></span>Pronto</div>
 </aside>
 
-<!-- ══════════ MAIN ═════════════════════ -->
+<!-- MAIN -->
 <div class="main">
   <div class="topbar">
-    <button class="mbtn" onclick="openSb()" aria-label="Menu">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    </button>
-    <div class="tt" id="tt">Hoje <span id="ttsub"></span></div>
+    <button class="mbtn" onclick="openSb()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    <div class="tt" id="tt">Hoje</div>
     <button class="btn" onclick="syncAll()" id="sync-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.8"/></svg>
-      Sincronizar
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.8"/></svg>Sincronizar
     </button>
     <button class="btn pri" onclick="openAddModal()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Novo
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo
     </button>
   </div>
 
@@ -378,8 +278,8 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
       <div class="stat red"><div class="sn" id="sa">0</div><div class="sl">Alta prioridade</div></div>
     </div>
     <div class="g2">
-      <div class="card"><div class="ch">Compromissos de hoje<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div id="ev-hoje"></div></div>
-      <div class="card"><div class="ch">Próximas pendências<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div id="pn-hoje"></div></div>
+      <div class="card"><div class="ch">Compromissos de hoje</div><div id="ev-hoje"></div></div>
+      <div class="card"><div class="ch">Próximas pendências</div><div id="pn-hoje"></div></div>
     </div>
   </div>
 
@@ -389,10 +289,10 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
       <div class="card">
         <div class="cal-nav">
           <h4 id="cal-lbl"></h4>
-          <div class="row">
-            <button class="ibt" onclick="mv(-1)" aria-label="Mês anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
-            <button class="ibt" onclick="mv(0)" aria-label="Hoje"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg></button>
-            <button class="ibt" onclick="mv(1)" aria-label="Próximo mês"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+          <div style="display:flex;gap:2px">
+            <button class="ibt" onclick="mv(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <button class="ibt" onclick="mv(0)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg></button>
+            <button class="ibt" onclick="mv(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
           </div>
         </div>
         <div class="cal-grid" id="cal-grid"></div>
@@ -410,7 +310,7 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
         <select class="fi" id="p-prio"><option value="alta">Alta</option><option value="media" selected>Média</option><option value="baixa">Baixa</option></select>
         <select class="fi" id="p-cat"><option value="fiscal">Fiscal / Tributário</option><option value="financeiro">Financeiro</option><option value="contabil">Contábil</option><option value="rh">RH / CSC</option><option value="pessoal">Pessoal</option><option value="outros">Outros</option></select>
         <input type="date" class="fi" id="p-dat">
-        <select class="fi" id="p-acc"><option value="local">Pessoal</option></select>
+        <select class="fi" id="p-acc"></select>
         <button class="btn pri" onclick="addPend()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Adicionar</button>
       </div>
     </div>
@@ -427,13 +327,13 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
 
   <!-- INTEGRAÇÕES -->
   <div class="view" id="view-integracoes">
-    <div id="uri-helper" style="background:#fffbeb;border:1px solid #f5a623;border-radius:13px;padding:13px 16px;margin-bottom:12px;display:none">
-      <div style="font-size:11px;font-weight:600;color:#a06010;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">URI de redirecionamento autorizado</div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <code id="uri-display" style="font-family:var(--fm);font-size:11px;color:#1a1d2e;background:#f5f6fa;padding:6px 10px;border-radius:6px;flex:1;word-break:break-all"></code>
+    <div class="uri-box">
+      <div class="uri-lbl">URI de redirecionamento autorizado</div>
+      <div class="uri-row">
+        <code id="uri-val"></code>
         <button class="btn sm" onclick="copyURI()">Copiar</button>
       </div>
-      <div style="font-size:11px;color:#a06010;margin-top:7px">Cole este URI exato em "URIs de redirecionamento autorizados" no Google Cloud Console e no Azure.</div>
+      <div class="uri-note">Cole este URI no Google Cloud Console e no Azure Portal.</div>
     </div>
     <div id="int-cards"></div>
     <div class="card" style="margin-top:12px">
@@ -441,67 +341,19 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
       <div class="srow"><div><div class="slbl">Lembretes de vencimento</div><div class="sdesc">Notificar pendências próximas do prazo</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
       <div class="srow"><div><div class="slbl">Mostrar horário nos eventos</div><div class="sdesc">Exibir hora na listagem de agenda</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
       <div class="srow"><div><div class="slbl">Sincronização automática</div><div class="sdesc">Atualizar a cada 15 minutos</div></div><div class="tog" onclick="this.classList.toggle('on')"></div></div>
-      <div class="srow"><div><div class="slbl">Notificações desktop</div><div class="sdesc">Alertas do navegador para compromissos</div></div><div class="tog" onclick="this.classList.toggle('on')"></div></div>
     </div>
   </div>
 
-  <!-- GUIA -->
-  <div class="view" id="view-guia">
-    <div class="card mb16">
-      <div class="ch">Como conectar suas contas - passo a passo</div>
-      <p style="font-size:13px;color:var(--t2);margin-bottom:16px;line-height:1.7">
-        O app usa OAuth 2.0 - o mesmo padrão do Google e Microsoft. Nenhuma senha fica gravada no arquivo.
-        O token de acesso fica armazenado apenas no localStorage do seu navegador e pode ser revogado a qualquer momento.
-      </p>
-
-      <!-- GOOGLE -->
-      <div style="padding:4px 0 14px">
-        <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px">
-          <div style="width:28px;height:28px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center">${gSVG()}</div>
-          <span style="font-family:var(--fh);font-size:13px;font-weight:700">Google - souagrosolucoes.com.br</span>
-        </div>
-        <div class="step"><div class="stepn">1</div><div class="step-b"><div class="step-t">Criar projeto no Google Cloud Console</div><div class="step-d">Acesse <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> > crie um projeto novo (ex: "Agenda Hub")</div></div></div>
-        <div class="step"><div class="stepn">2</div><div class="step-b"><div class="step-t">Ativar as APIs</div><div class="step-d">"APIs e serviços" > "Biblioteca" > ative as duas:<div class="code">Google Calendar API
-Gmail API</div></div></div></div>
-        <div class="step"><div class="stepn">3</div><div class="step-b"><div class="step-t">Criar credencial OAuth 2.0</div><div class="step-d">"Credenciais" > "+ Criar" > "ID cliente OAuth" > tipo: <strong>Aplicativo da Web</strong><br>Origens JS autorizadas:<div class="code">http://localhost
-file://
-https://seu-usuario.github.io  (se hospedar online)</div></div></div></div>
-        <div class="step"><div class="stepn">4</div><div class="step-b"><div class="step-t">Adicionar conta de teste</div><div class="step-d">"Tela de consentimento OAuth" > "Usuários de teste" > adicione:<div class="code">cleiton.trajano@souagrosolucoes.com.br</div></div></div></div>
-        <div class="step"><div class="stepn">5</div><div class="step-b"><div class="step-t">Colar o Client ID no arquivo</div><div class="step-d">No topo do HTML, substitua:<div class="code">GOOGLE_CLIENT_ID: '961137556992-utnc2a3qh89m7fh12fnesifhu76ir8r7.apps.googleusercontent.com'</div></div></div></div>
-      </div>
-
-      <!-- MICROSOFT -->
-      <div style="border-top:1px solid var(--bd);padding:14px 0 4px">
-        <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px">
-          <div style="width:28px;height:28px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center">${mSVG()}</div>
-          <span style="font-family:var(--fh);font-size:13px;font-weight:700">Microsoft - Secullum + Rota Oeste</span>
-        </div>
-        <div class="step"><div class="stepn">1</div><div class="step-b"><div class="step-t">Registrar aplicativo no Azure</div><div class="step-d">Acesse <a href="https://portal.azure.com" target="_blank">portal.azure.com</a> > "Microsoft Entra ID" > "Registros de aplicativos" > "+ Novo registro"</div></div></div>
-        <div class="step"><div class="stepn">2</div><div class="step-b"><div class="step-t">Tipo de conta e URI</div><div class="step-d">Tipo: <strong>Contas em qualquer diretório + pessoais</strong><br>URI de redirecionamento: Web<div class="code">http://localhost
-https://seu-usuario.github.io</div></div></div></div>
-        <div class="step"><div class="stepn">3</div><div class="step-b"><div class="step-t">Permissões de API (Microsoft Graph)</div><div class="step-d">"Permissões de API" > "Adicionar" > "Microsoft Graph" > Delegadas:<div class="code">Calendars.Read
-Calendars.ReadWrite
-Mail.Read
-offline_access
-User.Read</div></div></div></div>
-        <div class="step"><div class="stepn">4</div><div class="step-b"><div class="step-t">Colar o Application ID no arquivo</div><div class="step-d">Em "Visão geral", copie o "ID do aplicativo (cliente)" e cole:<div class="code">MICROSOFT_CLIENT_ID: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'</div></div></div></div>
-        <div class="step"><div class="stepn">5</div><div class="step-b"><div class="step-t">Ambas as contas Microsoft usam o mesmo Client ID</div><div class="step-d">Ao conectar cada conta, o login_hint direcionará para o e-mail correto:<div class="code">cleiton.trajano@secullumcontabilidade.com.br
-cleiton.barroso@gruporotaoeste.com.br</div></div></div></div>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /main -->
-</div><!-- /app -->
+</div>
+</div>
 
 <!-- MODAL OAUTH -->
 <div class="mbg" id="m-oauth">
   <div class="mbox">
     <button class="ibt mclose" onclick="closeM('m-oauth')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     <h3 id="m-title">Conectar conta</h3>
-    <p id="m-desc">Escolha o provedor para autenticar.</p>
+    <p id="m-desc"></p>
     <div id="m-btns"></div>
-    <div class="oauth-note">O login usa OAuth 2.0. Nenhuma senha fica gravada neste arquivo. O token de acesso fica no localStorage do seu navegador e pode ser revogado a qualquer momento nas configurações do Google ou Microsoft.</div>
   </div>
 </div>
 
@@ -513,16 +365,13 @@ cleiton.barroso@gruporotaoeste.com.br</div></div></div></div>
     <p>Adicione um compromisso à sua agenda.</p>
     <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:14px">
       <input type="text" class="fi" id="ae-tit" placeholder="Título do evento..." style="width:100%">
-      <div style="display:flex;gap:8px">
-        <input type="date" class="fi" id="ae-dat" style="flex:1">
-        <input type="time" class="fi" id="ae-tim" style="flex:1" value="09:00">
-      </div>
+      <div style="display:flex;gap:8px"><input type="date" class="fi" id="ae-dat" style="flex:1"><input type="time" class="fi" id="ae-tim" style="flex:1" value="09:00"></div>
       <input type="text" class="fi" id="ae-loc" placeholder="Local / link (opcional)..." style="width:100%">
       <select class="fi" id="ae-acc" style="width:100%"></select>
     </div>
     <div style="display:flex;gap:8px">
       <button class="btn" onclick="closeM('m-add')" style="flex:1">Cancelar</button>
-      <button class="btn pri" onclick="addEvt()" style="flex:2">Salvar evento</button>
+      <button class="btn pri" onclick="addEvt()" style="flex:2">Salvar</button>
     </div>
   </div>
 </div>
@@ -530,17 +379,30 @@ cleiton.barroso@gruporotaoeste.com.br</div></div></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
-/* ─ SVG HELPERS ──────────────────────── */
-function gSVG(){return '<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#4285F4" d="M47.5 24.5c0-1.7-.1-3.3-.4-4.8H24v9.1h13.1c-.6 3-2.3 5.5-4.9 7.2v6h7.9c4.6-4.2 7.4-10.5 7.4-17.5z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.8-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.1 2.3-6.2 0-11.5-4.2-13.4-9.9H2.6v6.2C6.5 42.5 14.7 48 24 48z"/><path fill="#FBBC04" d="M10.6 28.6c-.5-1.4-.8-2.9-.8-4.6s.3-3.2.8-4.6v-6.2H2.6C1 16.5 0 20.1 0 24s1 7.5 2.6 10.8l8-6.2z"/><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.5l6.8-6.8C35.9 2.4 30.4 0 24 0 14.7 0 6.5 5.5 2.6 13.2l8 6.2C12.5 13.7 17.8 9.5 24 9.5z"/></svg>';}
-function mSVG(){return '<svg width="18" height="18" viewBox="0 0 23 23"><path fill="#f35325" d="M1 1h10v10H1z"/><path fill="#81bc06" d="M12 1h10v10H12z"/><path fill="#05a6f0" d="M1 12h10v10H1z"/><path fill="#ffba08" d="M12 12h10v10H12z"/></svg>';}
+// ── HELPERS ──────────────────────────────────────────────
+function fd(d){ return (d instanceof Date ? d : new Date(d)).toISOString().slice(0,10); }
+function ad(d,n){ var x=new Date(d); x.setDate(x.getDate()+n); return x; }
+function dp(s){ if(!s) return ''; var p=s.split('-'); return p[2]+'/'+p[1]+'/'+p[0].slice(2); }
+function gSVG(){ return '<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#4285F4" d="M47.5 24.5c0-1.7-.1-3.3-.4-4.8H24v9.1h13.1c-.6 3-2.3 5.5-4.9 7.2v6h7.9c4.6-4.2 7.4-10.5 7.4-17.5z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.8-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.1 2.3-6.2 0-11.5-4.2-13.4-9.9H2.6v6.2C6.5 42.5 14.7 48 24 48z"/><path fill="#FBBC04" d="M10.6 28.6c-.5-1.4-.8-2.9-.8-4.6s.3-3.2.8-4.6v-6.2H2.6C1 16.5 0 20.1 0 24s1 7.5 2.6 10.8l8-6.2z"/><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.5l6.8-6.8C35.9 2.4 30.4 0 24 0 14.7 0 6.5 5.5 2.6 13.2l8 6.2C12.5 13.7 17.8 9.5 24 9.5z"/></svg>'; }
+function mSVG(){ return '<svg width="18" height="18" viewBox="0 0 23 23"><path fill="#f35325" d="M1 1h10v10H1z"/><path fill="#81bc06" d="M12 1h10v10H12z"/><path fill="#05a6f0" d="M1 12h10v10H1z"/><path fill="#ffba08" d="M12 12h10v10H12z"/></svg>'; }
 
-/* ─ STATE ────────────────────────────── */
-const TD = new Date();
-var calM = new Date(TD.getFullYear(), TD.getMonth(), 1);
-var conn = JSON.parse(localStorage.getItem('csh_conn')||'{}');
-var evs  = JSON.parse(localStorage.getItem('csh_evs')||'null') || defEvs();
-var pend = JSON.parse(localStorage.getItem('csh_pend')||'null') || defPend();
-var ctog = JSON.parse(localStorage.getItem('csh_ctog')||'{}');
+// ── STATE ─────────────────────────────────────────────────
+var TD    = new Date();
+var calM  = new Date(TD.getFullYear(), TD.getMonth(), 1);
+var conn  = JSON.parse(localStorage.getItem('csh_conn')  || '{}');
+var ctog  = JSON.parse(localStorage.getItem('csh_ctog')  || '{}');
+var evs   = JSON.parse(localStorage.getItem('csh_evs')   || 'null') || defEvs();
+var pend  = JSON.parse(localStorage.getItem('csh_pend')  || 'null') || defPend();
+
+var MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+var WDAYS  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+var AM = {};
+CONFIG.ACCOUNTS.forEach(function(a){ AM[a.id] = a; });
+AM['local'] = {id:'local',label:'Pessoal',color:'#697089',soft:'rgba(105,112,137,0.10)',initials:'P',provider:'local'};
+
+function ac(id){ return (AM[id]||AM['local']).color; }
+function al(id){ return (AM[id]||AM['local']).label; }
 
 function save(){
   localStorage.setItem('csh_conn', JSON.stringify(conn));
@@ -549,21 +411,16 @@ function save(){
   localStorage.setItem('csh_ctog', JSON.stringify(ctog));
 }
 
-/* ─ DEFAULTS ─────────────────────────── */
-const fd = d => (d instanceof Date ? d : new Date(d)).toISOString().slice(0,10);
-const ad = (d,n) => { const x=new Date(d); x.setDate(x.getDate()+n); return x; };
-const dp = s => { if(!s) return ''; const p=s.split('-'); return p[2]+'/'+p[1]+'/'+p[0].slice(2); };
-
+// ── DEFAULT DATA ──────────────────────────────────────────
 function defEvs(){
   return [
     {id:1,title:'Reunião CSC - Fechamento mensal',time:'09:00',date:fd(TD),acc:'secullum',local:'Teams'},
     {id:2,title:'Alinhamento Marcos - ROV resultados',time:'11:00',date:fd(TD),acc:'rotaoeste',local:'Presencial'},
-    {id:3,title:'Call Plant Essence - Balancete',time:'14:30',date:fd(TD),acc:'souagro',local:'Google Meet'},
-    {id:4,title:'Academia Bluefit - treino corrida',time:'18:00',date:fd(TD),acc:'local',local:'Hortolândia'},
-    {id:5,title:'DARF CSLL Plant Essence - vencimento',time:'',date:fd(ad(TD,2)),acc:'secullum',local:''},
+    {id:3,title:'Call Plant Essence - Balancete',time:'14:30',date:fd(TD),acc:'souagro',local:'Meet'},
+    {id:4,title:'Academia Bluefit - corrida',time:'18:00',date:fd(TD),acc:'local',local:'Hortolândia'},
+    {id:5,title:'DARF CSLL - Plant Essence',time:'',date:fd(ad(TD,2)),acc:'secullum',local:''},
     {id:6,title:'Envio ECD ROV - Alterdata',time:'10:00',date:fd(ad(TD,5)),acc:'rotaoeste',local:''},
     {id:7,title:'Revisão orçamento Q2 - Entre Rios',time:'15:00',date:fd(ad(TD,3)),acc:'rotaoeste',local:'Teams'},
-    {id:8,title:'Apuração IRPJ/CSLL - CSC',time:'09:00',date:fd(ad(TD,8)),acc:'secullum',local:''},
   ];
 }
 function defPend(){
@@ -574,452 +431,457 @@ function defPend(){
     {id:4,title:'Atualizar dashboard SOU Agro v3 com dados maio',prio:'media',cat:'financeiro',date:fd(ad(TD,5)),acc:'souagro',done:false},
     {id:5,title:'Enviar balancete Alterdata para Rafael Zorzetto',prio:'baixa',cat:'contabil',date:fd(ad(TD,10)),acc:'secullum',done:false},
     {id:6,title:'Regularizar venda Pedriza - chassis WVB00863CJVA00274',prio:'alta',cat:'fiscal',date:fd(ad(TD,14)),acc:'rotaoeste',done:false},
-    {id:7,title:'PLR compradores e contadora CSC - proposta final',prio:'media',cat:'rh',date:fd(ad(TD,12)),acc:'secullum',done:false},
+    {id:7,title:'PLR compradores e contadora CSC',prio:'media',cat:'rh',date:fd(ad(TD,12)),acc:'secullum',done:false},
     {id:8,title:'Renovar seguro Amarok V6 2019',prio:'baixa',cat:'pessoal',date:fd(ad(TD,20)),acc:'local',done:true},
   ];
 }
 
-/* ─ ACC MAP ──────────────────────────── */
-const AM = {};
-CONFIG.ACCOUNTS.forEach(a => AM[a.id]=a);
-AM['local'] = {id:'local',label:'Pessoal',color:'#697089',soft:'rgba(105,112,137,0.12)',initials:'P',provider:'local'};
-const ac = id => (AM[id]||AM['local']).color;
-const al = id => (AM[id]||AM['local']).label;
-
-/* ─ SIDEBAR ──────────────────────────── */
-const MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const WDAYS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-
-function copyURI(){
-  const uri = document.getElementById('uri-display').textContent;
-  navigator.clipboard.writeText(uri).then(()=>toast('URI copiado!','ok')).catch(()=>{
-    const el=document.getElementById('uri-display');
-    const r=document.createRange();r.selectNode(el);
-    window.getSelection().removeAllRanges();window.getSelection().addRange(r);
-    document.execCommand('copy');toast('URI copiado!','ok');
-  });
-}
-
+// ── SIDEBAR ───────────────────────────────────────────────
 function buildSb(){
-  document.getElementById('acc-sb').innerHTML = CONFIG.ACCOUNTS.map(a=>{
-    const c=conn[a.id];
-    return `<div class="acc-row" onclick="go('integracoes')">
-      <div class="av" style="background:${a.soft};color:${a.color}">${a.initials}</div>
-      <span class="acc-label" title="${a.email}">${a.label}</span>
-      <div class="sdot ${c?'on':'off'}"></div>
-    </div>`;
+  document.getElementById('acc-sb').innerHTML = CONFIG.ACCOUNTS.map(function(a){
+    var c = conn[a.id];
+    return '<div class="acc-row" onclick="go(\'integracoes\')">'+
+      '<div class="av" style="background:'+a.soft+';color:'+a.color+'">'+a.initials+'</div>'+
+      '<span class="acc-label" title="'+a.email+'">'+a.label+'</span>'+
+      '<div class="sdot '+(c?'on':'off')+'"></div></div>';
   }).join('');
 
-  const allAccs=[...CONFIG.ACCOUNTS,{id:'local',label:'Pessoal',color:'#697089',soft:''}];
-  document.getElementById('cal-togs').innerHTML = allAccs.map(a=>{
-    const on=ctog[a.id]!==false;
-    return `<div class="acc-row">
-      <div style="width:7px;height:7px;border-radius:50%;background:${a.color};flex-shrink:0"></div>
-      <span class="acc-label">${a.label}</span>
-      <div class="tog ${on?'on':''}" onclick="togCal('${a.id}',this)"></div>
-    </div>`;
+  var allAccs = CONFIG.ACCOUNTS.concat([{id:'local',label:'Pessoal',color:'#697089',soft:''}]);
+  document.getElementById('cal-togs').innerHTML = allAccs.map(function(a){
+    var on = ctog[a.id] !== false;
+    return '<div class="acc-row">'+
+      '<div style="width:7px;height:7px;border-radius:50%;background:'+a.color+';flex-shrink:0"></div>'+
+      '<span class="acc-label">'+a.label+'</span>'+
+      '<div class="tog '+(on?'on':'')+'" onclick="togCal(\''+a.id+'\',this)"></div></div>';
   }).join('');
 
-  const nc=Object.values(conn).filter(Boolean).length;
+  var nc = CONFIG.ACCOUNTS.filter(function(a){ return conn[a.id]; }).length;
   document.getElementById('sf-txt').innerHTML = nc
-    ? `<span class="sf-dot"></span>${nc} conta(s) conectada(s)`
-    : `<span class="sf-dot" style="background:var(--t3)"></span>Nenhuma conta conectada`;
+    ? '<span class="sf-dot"></span> '+nc+' conta(s) conectada(s)'
+    : '<span class="sf-dot" style="background:var(--t3)"></span> Nenhuma conta conectada';
 }
 
 function togCal(id,el){
   el.classList.toggle('on');
-  ctog[id]=el.classList.contains('on');
+  ctog[id] = el.classList.contains('on');
   save(); renderToday(); renderCal();
 }
 
-/* ─ NAV ──────────────────────────────── */
+// ── NAVIGATION ────────────────────────────────────────────
 function fmtLbl(){
   return WDAYS[TD.getDay()]+', '+TD.getDate()+' de '+MONTHS[TD.getMonth()].toLowerCase()+' de '+TD.getFullYear();
 }
 
 function go(v){
-  document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));
-  document.querySelectorAll('.ni').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(function(e){ e.classList.remove('active'); });
+  document.querySelectorAll('.ni').forEach(function(e){ e.classList.remove('active'); });
   document.getElementById('view-'+v).classList.add('active');
   document.getElementById('nav-'+v).classList.add('active');
-  const lbl={hoje:'Hoje',agenda:'Agenda',pendencias:'Pendências',integracoes:'Integrações',guia:'Guia de Configuração'};
-  document.getElementById('tt').innerHTML=lbl[v]+(v==='hoje'?`<span>${fmtLbl()}</span>`:'');
+  var lbl = {hoje:'Hoje',agenda:'Agenda',pendencias:'Pendências',integracoes:'Integrações'};
+  document.getElementById('tt').innerHTML = lbl[v] + (v==='hoje' ? ' <span>'+fmtLbl()+'</span>' : '');
   if(v==='agenda') renderCal();
   if(v==='pendencias') renderPend();
   if(v==='integracoes') renderInt();
   closeSb();
 }
 
-/* ─ VIEW: HOJE ───────────────────────── */
+// ── RENDER: HOJE ──────────────────────────────────────────
 function visAccs(){
-  return [...CONFIG.ACCOUNTS.map(a=>a.id),'local'].filter(id=>ctog[id]!==false);
+  return CONFIG.ACCOUNTS.map(function(a){ return a.id; }).concat(['local']).filter(function(id){ return ctog[id] !== false; });
 }
 
 function renderToday(){
-  const ts=fd(TD), va=visAccs();
-  const te=evs.filter(e=>e.date===ts&&va.includes(e.acc||'local'));
-  const op=pend.filter(p=>!p.done);
-  const hi=pend.filter(p=>p.prio==='alta'&&!p.done);
-  document.getElementById('se').textContent=te.length;
-  document.getElementById('sp').textContent=op.length;
-  document.getElementById('sa').textContent=hi.length;
-  document.getElementById('b-hoje').textContent=te.length;
-  document.getElementById('b-pend').textContent=op.length;
+  if(!evs || !pend) return;
+  var ts = fd(TD), va = visAccs();
+  var te = evs.filter(function(e){ return e.date===ts && va.includes(e.acc||'local'); });
+  var op = pend.filter(function(p){ return !p.done; });
+  var hi = pend.filter(function(p){ return p.prio==='alta' && !p.done; });
 
-  let eh='';
-  if(!te.length){eh=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Nenhum compromisso hoje</div>`;}
-  else te.sort((a,b)=>(a.time||'99').localeCompare(b.time||'99')).forEach(e=>{
-    const col=ac(e.acc||'local'),lbl=al(e.acc||'local');
-    eh+=`<div class="ev"><span class="ev-t">${e.time||'--:--'}</span><div class="ev-bar" style="background:${col}"></div><div class="ev-b"><div class="ev-title">${e.title}</div><div class="ev-meta"><span class="esrc" style="background:${col}22;color:${col}">${lbl}</span>${e.local?`<span class="eloc">${e.local}</span>`:''}</div></div></div>`;
-  });
-  document.getElementById('ev-hoje').innerHTML=eh;
+  document.getElementById('se').textContent = te.length;
+  document.getElementById('sp').textContent = op.length;
+  document.getElementById('sa').textContent = hi.length;
+  document.getElementById('b-hoje').textContent = te.length;
+  document.getElementById('b-pend').textContent = op.length;
 
-  const up=pend.filter(p=>!p.done).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
-  let ph='';
-  if(!up.length){ph=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Tudo em dia!</div>`;}
-  else up.forEach(p=>{
-    ph+=`<div class="pi"><input type="checkbox" onchange="chk(${p.id},this)"><div class="pi-b"><div class="pit">${p.title}</div><div class="pim"><span class="tag ${p.prio}">${{alta:'Alta',media:'Média',baixa:'Baixa'}[p.prio]}</span><span class="tag cat">${p.cat}</span><span class="pidate">${dp(p.date)}</span></div></div></div>`;
-  });
-  document.getElementById('pn-hoje').innerHTML=ph;
+  var eh = '';
+  if(!te.length){
+    eh = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Nenhum compromisso hoje</div>';
+  } else {
+    te.sort(function(a,b){ return (a.time||'99').localeCompare(b.time||'99'); }).forEach(function(e){
+      var col=ac(e.acc||'local'), lbl=al(e.acc||'local');
+      eh += '<div class="ev"><span class="ev-t">'+(e.time||'--:--')+'</span>'+
+        '<div class="ev-bar" style="background:'+col+'"></div>'+
+        '<div class="ev-body"><div class="ev-title">'+e.title+'</div>'+
+        '<div class="ev-meta"><span class="esrc" style="background:'+col+'22;color:'+col+'">'+lbl+'</span>'+
+        (e.local?'<span class="eloc">'+e.local+'</span>':'')+
+        '</div></div></div>';
+    });
+  }
+  document.getElementById('ev-hoje').innerHTML = eh;
+
+  var up = pend.filter(function(p){ return !p.done; }).sort(function(a,b){ return a.date.localeCompare(b.date); }).slice(0,5);
+  var ph = '';
+  if(!up.length){
+    ph = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 11 12 14 22 4"/></svg>Tudo em dia!</div>';
+  } else {
+    up.forEach(function(p){
+      ph += '<div class="pi"><input type="checkbox" onchange="chk('+p.id+',this)">'+
+        '<div class="pi-body"><div class="pit">'+p.title+'</div>'+
+        '<div class="pim"><span class="tag '+p.prio+'">'+(p.prio==='alta'?'Alta':p.prio==='media'?'Média':'Baixa')+'</span>'+
+        '<span class="tag cat">'+p.cat+'</span>'+
+        '<span class="pidate">'+dp(p.date)+'</span></div></div></div>';
+    });
+  }
+  document.getElementById('pn-hoje').innerHTML = ph;
 }
 
-/* ─ VIEW: PENDÊNCIAS ─────────────────── */
+// ── RENDER: PENDÊNCIAS ────────────────────────────────────
 function renderPend(){
-  const f=document.getElementById('p-fil').value;
-  const ord={alta:0,media:1,baixa:2};
-  let list=pend.filter(p=>{
+  if(!pend) return;
+  var f = document.getElementById('p-fil').value;
+  var ord = {alta:0,media:1,baixa:2};
+  var list = pend.filter(function(p){
     if(f==='alta') return p.prio==='alta'&&!p.done;
     if(f==='abertas') return !p.done;
     if(f==='concluidas') return p.done;
     return true;
-  }).sort((a,b)=>((a.done?10:0)+ord[a.prio])-((b.done?10:0)+ord[b.prio]));
-  let h='';
-  if(!list.length){h=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 11 12 14 22 4"/></svg>Nenhuma pendência neste filtro</div>`;}
-  else list.forEach(p=>{
-    const col=ac(p.acc||'local'),lbl=al(p.acc||'local');
-    h+=`<div class="pi"><input type="checkbox" ${p.done?'checked':''} onchange="chk(${p.id},this)"><div class="pi-b"><div class="pit ${p.done?'done':''}">${p.title}</div><div class="pim"><span class="tag ${p.prio}">${{alta:'Alta',media:'Média',baixa:'Baixa'}[p.prio]}</span><span class="tag cat">${p.cat}</span><span class="esrc" style="background:${col}22;color:${col};font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600">${lbl}</span>${p.date?`<span class="pidate">${dp(p.date)}</span>`:''}</div></div><button class="ibt" onclick="delP(${p.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>`;
-  });
-  document.getElementById('pend-list').innerHTML=h;
+  }).sort(function(a,b){ return ((a.done?10:0)+ord[a.prio])-((b.done?10:0)+ord[b.prio]); });
+
+  var h = '';
+  if(!list.length){
+    h = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 11 12 14 22 4"/></svg>Nenhuma pendência neste filtro</div>';
+  } else {
+    list.forEach(function(p){
+      var col=ac(p.acc||'local'), lbl=al(p.acc||'local');
+      h += '<div class="pi"><input type="checkbox" '+(p.done?'checked':'')+' onchange="chk('+p.id+',this)">'+
+        '<div class="pi-body"><div class="pit '+(p.done?'done':'')+'">'+p.title+'</div>'+
+        '<div class="pim"><span class="tag '+p.prio+'">'+(p.prio==='alta'?'Alta':p.prio==='media'?'Média':'Baixa')+'</span>'+
+        '<span class="tag cat">'+p.cat+'</span>'+
+        '<span class="esrc" style="background:'+col+'22;color:'+col+';font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600">'+lbl+'</span>'+
+        (p.date?'<span class="pidate">'+dp(p.date)+'</span>':'')+
+        '</div></div>'+
+        '<button class="ibt" onclick="delP('+p.id+')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
+    });
+  }
+  document.getElementById('pend-list').innerHTML = h;
 }
 
 function addPend(){
-  const t=document.getElementById('p-tit').value.trim();
-  if(!t){document.getElementById('p-tit').focus();return;}
-  const nid=pend.reduce((m,p)=>Math.max(m,p.id),0)+1;
+  var t = document.getElementById('p-tit').value.trim();
+  if(!t){ document.getElementById('p-tit').focus(); return; }
+  var nid = pend.reduce(function(m,p){ return Math.max(m,p.id); },0)+1;
   pend.unshift({id:nid,title:t,prio:document.getElementById('p-prio').value,cat:document.getElementById('p-cat').value,date:document.getElementById('p-dat').value,acc:document.getElementById('p-acc').value||'local',done:false});
-  document.getElementById('p-tit').value='';
-  save();renderPend();renderToday();toast('Pendência adicionada','ok');
+  document.getElementById('p-tit').value = '';
+  save(); renderPend(); renderToday();
+  toast('Pendência adicionada','ok');
 }
-function chk(id,cb){const p=pend.find(x=>x.id===id);if(p){p.done=cb.checked;save();renderToday();}if(document.getElementById('view-pendencias').classList.contains('active'))renderPend();}
-function delP(id){pend=pend.filter(p=>p.id!==id);save();renderPend();renderToday();}
 
-/* ─ VIEW: AGENDA ─────────────────────── */
+function chk(id,cb){
+  var p = pend.find(function(x){ return x.id===id; });
+  if(p){ p.done=cb.checked; save(); renderToday(); }
+  if(document.getElementById('view-pendencias').classList.contains('active')) renderPend();
+}
+
+function delP(id){
+  pend = pend.filter(function(p){ return p.id!==id; });
+  save(); renderPend(); renderToday();
+}
+
+// ── RENDER: AGENDA ────────────────────────────────────────
 function renderCal(){
-  document.getElementById('cal-lbl').textContent=MONTHS[calM.getMonth()]+' '+calM.getFullYear();
-  const va=visAccs();
-  let h=WDAYS.map(d=>`<div class="cal-hd">${d}</div>`).join('');
-  const fd0=new Date(calM.getFullYear(),calM.getMonth(),1).getDay();
-  const dim=new Date(calM.getFullYear(),calM.getMonth()+1,0).getDate();
-  const prev=new Date(calM.getFullYear(),calM.getMonth(),0).getDate();
-  for(let i=fd0-1;i>=0;i--) h+=`<div class="cd om">${prev-i}</div>`;
-  for(let d=1;d<=dim;d++){
-    const ds=calM.getFullYear()+'-'+String(calM.getMonth()+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    const isT=ds===fd(TD);
-    const de=evs.filter(e=>e.date===ds&&va.includes(e.acc||'local'));
-    const dots=de.slice(0,4).map(e=>`<span style="background:${ac(e.acc||'local')}"></span>`).join('');
-    h+=`<div class="cd ${isT?'today':''}">${d}${de.length?`<div class="dts">${dots}</div>`:''}</div>`;
+  if(!evs) return;
+  document.getElementById('cal-lbl').textContent = MONTHS[calM.getMonth()]+' '+calM.getFullYear();
+  var va = visAccs();
+  var h = WDAYS.map(function(d){ return '<div class="cal-hd">'+d+'</div>'; }).join('');
+  var fd0 = new Date(calM.getFullYear(),calM.getMonth(),1).getDay();
+  var dim = new Date(calM.getFullYear(),calM.getMonth()+1,0).getDate();
+  var prev = new Date(calM.getFullYear(),calM.getMonth(),0).getDate();
+  for(var i=fd0-1;i>=0;i--) h += '<div class="cd om">'+(prev-i)+'</div>';
+  for(var d=1;d<=dim;d++){
+    var ds = calM.getFullYear()+'-'+String(calM.getMonth()+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var isT = ds===fd(TD);
+    var de = evs.filter(function(e){ return e.date===ds && va.includes(e.acc||'local'); });
+    var dots = de.slice(0,4).map(function(e){ return '<span style="background:'+ac(e.acc||'local')+'"></span>'; }).join('');
+    h += '<div class="cd '+(isT?'today':'')+'">'+d+(de.length?'<div class="dts">'+dots+'</div>':'')+'</div>';
   }
-  const used=fd0+dim;const rem=(7-(used%7))%7;
-  for(let n=1;n<=rem;n++) h+=`<div class="cd om">${n}</div>`;
-  document.getElementById('cal-grid').innerHTML=h;
+  var used=fd0+dim, rem=(7-(used%7))%7;
+  for(var n=1;n<=rem;n++) h += '<div class="cd om">'+n+'</div>';
+  document.getElementById('cal-grid').innerHTML = h;
 
-  const up=evs.filter(e=>e.date>=fd(TD)&&va.includes(e.acc||'local')).sort((a,b)=>a.date.localeCompare(b.date)||(a.time||'').localeCompare(b.time||'')).slice(0,10);
-  let lh='';
-  if(!up.length){lh=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Nenhum evento próximo</div>`;}
-  else up.forEach(e=>{
-    const col=ac(e.acc||'local'),lbl=al(e.acc||'local');
-    lh+=`<div class="ev"><span class="ev-t" style="min-width:52px">${dp(e.date)}</span><div class="ev-bar" style="background:${col}"></div><div class="ev-b"><div class="ev-title">${e.title}</div><div class="ev-meta"><span class="esrc" style="background:${col}22;color:${col}">${lbl}</span>${e.local?`<span class="eloc">${e.local}</span>`:''}</div></div></div>`;
-  });
-  document.getElementById('ev-list').innerHTML=lh;
+  var up = evs.filter(function(e){ return e.date>=fd(TD) && va.includes(e.acc||'local'); })
+    .sort(function(a,b){ return a.date.localeCompare(b.date)||(a.time||'').localeCompare(b.time||''); }).slice(0,10);
+  var lh = '';
+  if(!up.length){
+    lh = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Nenhum evento próximo</div>';
+  } else {
+    up.forEach(function(e){
+      var col=ac(e.acc||'local'), lbl=al(e.acc||'local');
+      lh += '<div class="ev"><span class="ev-t" style="min-width:52px">'+dp(e.date)+'</span>'+
+        '<div class="ev-bar" style="background:'+col+'"></div>'+
+        '<div class="ev-body"><div class="ev-title">'+e.title+'</div>'+
+        '<div class="ev-meta"><span class="esrc" style="background:'+col+'22;color:'+col+'">'+lbl+'</span>'+
+        (e.local?'<span class="eloc">'+e.local+'</span>':'')+
+        '</div></div></div>';
+    });
+  }
+  document.getElementById('ev-list').innerHTML = lh;
 }
 
 function mv(d){
-  if(d===0) calM=new Date(TD.getFullYear(),TD.getMonth(),1);
-  else calM=new Date(calM.getFullYear(),calM.getMonth()+d,1);
+  if(d===0) calM = new Date(TD.getFullYear(),TD.getMonth(),1);
+  else calM = new Date(calM.getFullYear(),calM.getMonth()+d,1);
   renderCal();
 }
 
-/* ─ VIEW: INTEGRAÇÕES ───────────────── */
+// ── RENDER: INTEGRAÇÕES ───────────────────────────────────
 function renderInt(){
-  // Show redirect URI helper
-  const uriHelper = document.getElementById('uri-helper');
-  const uriDisplay = document.getElementById('uri-display');
-  const currentURI = location.href.split('?')[0].split('#')[0];
-  uriDisplay.textContent = currentURI;
-  uriHelper.style.display = 'block';
-
-  document.getElementById('int-cards').innerHTML=CONFIG.ACCOUNTS.map(a=>{
-    const c=conn[a.id];
-    const provIcon=a.provider==='google'?gSVG():mSVG();
-    return `<div class="ic">
-      <div class="ic-top">
-        <div class="ic-icon" style="background:${a.soft}">${provIcon}</div>
-        <div style="flex:1;min-width:0">
-          <div class="ic-name">${a.label}</div>
-          <div class="ic-email">${a.email}</div>
-        </div>
-        <span class="pill ${c?'conn':'disc'}">${c?'Conectado':'Desconectado'}</span>
-      </div>
-      <div class="ic-actions">
-        ${c
-          ?`<button class="btn sm danger" onclick="disconnect('${a.id}')">Desconectar</button><button class="btn sm" onclick="syncAcc('${a.id}')">Sincronizar agora</button>`
-          :`<button class="btn sm pri" onclick="openOAuth('${a.id}')">Conectar conta</button>`
-        }
-        <button class="btn sm" onclick="go('guia')" style="margin-left:auto;opacity:0.6">Como configurar</button>
-      </div>
-    </div>`;
+  document.getElementById('uri-val').textContent = CONFIG.REDIRECT_URI;
+  document.getElementById('int-cards').innerHTML = CONFIG.ACCOUNTS.map(function(a){
+    var c = conn[a.id];
+    var icon = a.provider==='google' ? gSVG() : mSVG();
+    return '<div class="ic">'+
+      '<div class="ic-top">'+
+      '<div class="ic-icon" style="background:'+a.soft+'">'+icon+'</div>'+
+      '<div style="flex:1;min-width:0"><div class="ic-name">'+a.label+'</div><div class="ic-email">'+a.email+'</div></div>'+
+      '<span class="pill '+(c?'conn':'disc')+'">'+(c?'Conectado':'Desconectado')+'</span>'+
+      '</div>'+
+      '<div style="display:flex;gap:7px;flex-wrap:wrap">'+
+      (c
+        ? '<button class="btn sm danger" onclick="disconnect(\''+a.id+'\')">Desconectar</button><button class="btn sm" onclick="syncAcc(\''+a.id+'\')">Sincronizar agora</button>'
+        : '<button class="btn sm pri" onclick="openOAuth(\''+a.id+'\')">Conectar conta</button>'
+      )+
+      '</div></div>';
   }).join('');
 }
 
-/* ─ OAUTH GOOGLE ─────────────────────── */
-function oauthGoogle(accId){
-  if(CONFIG.GOOGLE_CLIENT_ID.includes('SEU_GOOGLE')){toast('Configure o GOOGLE_CLIENT_ID no topo do arquivo HTML','warn');go('guia');closeM('m-oauth');return;}
-  const a=CONFIG.ACCOUNTS.find(x=>x.id===accId);
-  const scopes=encodeURIComponent('https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/gmail.readonly');
-  // Use a redirect page that posts the token back via localStorage
-  const redirectPage = 'https://cleitonsecullumconsultoria-lab.github.io/agenda-hub/';
-  const redir=encodeURIComponent(redirectPage);
-  const state=encodeURIComponent(JSON.stringify({accId,ts:Date.now()}));
-  const url=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${CONFIG.GOOGLE_CLIENT_ID}&redirect_uri=${redir}&response_type=token&scope=${scopes}&login_hint=${encodeURIComponent(a.email)}&state=${state}`;
-  localStorage.setItem('csh_pending_acc',accId);
-  const popup=window.open(url,'oauth_popup','width=520,height=640,left=400,top=100');
-  const timer=setInterval(()=>{
-    try{
-      if(!popup||popup.closed){
-        clearInterval(timer);
-        // Check if token was saved by the popup redirect
-        const pending=localStorage.getItem('csh_pending_acc');
-        if(!pending) return; // already processed
-        // Try reading stored token
-        const stored=localStorage.getItem('csh_oauth_token_tmp');
-        if(stored){ localStorage.removeItem('csh_oauth_token_tmp'); processToken('#'+stored,accId); }
-        return;
-      }
-      try{
-        const h=popup.location.hash||'';
-        const href=popup.location.href||'';
-        if(h.includes('access_token')){
-          clearInterval(timer);
-          localStorage.setItem('csh_oauth_token_tmp', h.slice(1));
-          popup.close();
-          processToken(h,accId);
-        }
-      }catch(cross){}
-    }catch(e){}
-  },400);
+function copyURI(){
+  navigator.clipboard.writeText(CONFIG.REDIRECT_URI).then(function(){ toast('URI copiado!','ok'); });
 }
 
-/* ─ OAUTH MICROSOFT ─────────────────── */
-function oauthMicrosoft(accId){
-  if(CONFIG.MICROSOFT_CLIENT_ID.includes('SEU_MICROSOFT')){toast('Configure o MICROSOFT_CLIENT_ID no topo do arquivo HTML','warn');go('guia');closeM('m-oauth');return;}
-  const a=CONFIG.ACCOUNTS.find(x=>x.id===accId);
-  const scopes=encodeURIComponent('Calendars.Read Mail.Read offline_access User.Read');
-  const redirectPage = 'https://cleitonsecullumconsultoria-lab.github.io/agenda-hub/';
-  const redir=encodeURIComponent(redirectPage);
-  const state=encodeURIComponent(JSON.stringify({accId,ts:Date.now()}));
-  const url=`https://login.microsoftonline.com/${CONFIG.MICROSOFT_TENANT}/oauth2/v2.0/authorize?client_id=${CONFIG.MICROSOFT_CLIENT_ID}&response_type=token&redirect_uri=${redir}&scope=${scopes}&login_hint=${encodeURIComponent(a.email)}&state=${state}`;
-  localStorage.setItem('csh_pending_acc',accId);
-  const popup=window.open(url,'oauth_popup','width=520,height=640,left=400,top=100');
-  // postMessage listener handles the token - just watch for popup close as fallback
-  const timer=setInterval(()=>{
-    if(!popup||popup.closed){
-      clearInterval(timer);
-      // Check if token arrived via localStorage (fallback)
-      const stored=localStorage.getItem('csh_oauth_token_tmp');
-      if(stored){
-        localStorage.removeItem('csh_oauth_token_tmp');
-        try{
-          const obj=JSON.parse(stored);
-          processToken('#'+obj.hash, obj.accId||accId);
-        }catch(e){ processToken('#'+stored, accId); }
-      }
-    }
-  },400);
-}
-
-/* ─ HANDLE REDIRECT TOKEN ────────────── */
-function processToken(hash, forcedAccId){
-  const params={};
-  hash.replace(/^#/,'').split('&').forEach(p=>{const[k,...v]=p.split('=');params[k]=decodeURIComponent(v.join('=')||'');});
-  if(!params.access_token) return;
-  let accId=forcedAccId||localStorage.getItem('csh_pending_acc');
-  if(!accId&&params.state){try{accId=JSON.parse(params.state).accId;}catch(e){}}
-  if(accId){
-    conn[accId]={token:params.access_token,expires:Date.now()+(parseInt(params.expires_in||3600)*1000)};
-    localStorage.removeItem('csh_pending_acc');
-    save();
-    const a=CONFIG.ACCOUNTS.find(x=>x.id===accId);
-    if(APP_READY){
-      toast(`${a?a.label:'Conta'} conectada com sucesso!`,'ok');
-      buildSb();renderToday();
-      if(document.getElementById('view-integracoes').classList.contains('active')) renderInt();
-    }
-  }
-}
-
-function handleRedirect(){
-  const hash=location.hash;
-  if(!hash||!hash.includes('access_token')) return;
-  // Running as popup redirect - save token to localStorage and close popup
-  if(window.opener && !window.opener.closed){
-    try{
-      // Parse accId from state to pass back
-      const params={};
-      hash.replace(/^#/,'').split('&').forEach(p=>{const[k,...v]=p.split('=');params[k]=decodeURIComponent(v.join('=')||'');});
-      let accId=null;
-      if(params.state){try{accId=JSON.parse(params.state).accId;}catch(e){}}
-      accId=accId||localStorage.getItem('csh_pending_acc');
-      localStorage.setItem('csh_oauth_token_tmp', JSON.stringify({hash:hash.slice(1),accId}));
-      window.opener.postMessage({type:'oauth_token',hash:hash.slice(1),accId},'*');
-    }catch(e){}
-    window.close();
-    return;
-  }
-  // Main window received token directly (same-page redirect)
-  processToken(hash, null);
-  history.replaceState(null,'',location.pathname);
-}
-
-/* ─ SYNC GOOGLE ─────────────────────── */
-async function syncGoogle(accId,token){
-  const now=new Date().toISOString();
-  const end=new Date(Date.now()+30*24*3600000).toISOString();
-  const r=await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(now)}&timeMax=${encodeURIComponent(end)}&singleEvents=true&orderBy=startTime&maxResults=60`,{headers:{Authorization:`Bearer ${token}`}});
-  if(!r.ok) throw new Error(`Google API ${r.status}`);
-  const d=await r.json();
-  const imp=(d.items||[]).map((it,i)=>({id:9000+i+Math.floor(Math.random()*100),title:it.summary||'(sem título)',date:(it.start.dateTime||it.start.date||'').slice(0,10),time:it.start.dateTime?it.start.dateTime.slice(11,16):'',acc:accId,local:it.location||'',synced:true}));
-  evs=evs.filter(e=>!(e.synced&&e.acc===accId));
-  evs.push(...imp);
-}
-
-/* ─ SYNC MICROSOFT ──────────────────── */
-async function syncMicrosoft(accId,token){
-  const now=new Date().toISOString();
-  const end=new Date(Date.now()+30*24*3600000).toISOString();
-  const r=await fetch(`https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${now}&endDateTime=${end}&$top=60&$orderby=start/dateTime`,{headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'}});
-  if(!r.ok) throw new Error(`MS Graph ${r.status}`);
-  const d=await r.json();
-  const imp=(d.value||[]).map((it,i)=>({id:8000+i+Math.floor(Math.random()*100),title:it.subject||'(sem título)',date:(it.start.dateTime||'').slice(0,10),time:(it.start.dateTime||'').slice(11,16),acc:accId,local:it.location?.displayName||'',synced:true}));
-  evs=evs.filter(e=>!(e.synced&&e.acc===accId));
-  evs.push(...imp);
-}
-
-async function syncAcc(accId){
-  const c=conn[accId];
-  if(!c){toast('Conta não conectada','warn');return;}
-  if(Date.now()>c.expires){toast('Token expirado - reconecte a conta','warn');disconnect(accId);return;}
-  const a=CONFIG.ACCOUNTS.find(x=>x.id===accId);
-  toast(`Sincronizando ${a?a.label:'conta'}...`,'info');
-  try{
-    if(a.provider==='google') await syncGoogle(accId,c.token);
-    else await syncMicrosoft(accId,c.token);
-    save();renderToday();
-    if(document.getElementById('view-agenda').classList.contains('active')) renderCal();
-    toast(`${a?a.label:'Conta'} sincronizada!`,'ok');
-  }catch(e){toast('Erro: '+e.message,'warn');}
-}
-
-async function syncAll(){
-  const btn=document.getElementById('sync-btn');
-  btn.innerHTML=`<svg class="spinning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.8"/></svg> Sincronizando...`;
-  btn.disabled=true;
-  const connected=CONFIG.ACCOUNTS.filter(a=>conn[a.id]);
-  if(!connected.length) toast('Nenhuma conta conectada. Vá em Integrações.','warn');
-  else for(const a of connected) await syncAcc(a.id);
-  btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.8"/></svg> Sincronizar`;
-  btn.disabled=false;
-}
-
-function disconnect(accId){
-  delete conn[accId];save();buildSb();renderInt();
-  const a=CONFIG.ACCOUNTS.find(x=>x.id===accId);
-  toast(`${a?a.label:'Conta'} desconectada`,'info');
-}
-
-/* ─ MODAL OAUTH ─────────────────────── */
+// ── OAUTH ─────────────────────────────────────────────────
 function openOAuth(accId){
-  const a=CONFIG.ACCOUNTS.find(x=>x.id===accId);if(!a) return;
-  document.getElementById('m-title').textContent=`Conectar ${a.label}`;
-  document.getElementById('m-desc').textContent=`Autentique a conta ${a.email} para sincronizar calendário e e-mails.`;
-  const icon=a.provider==='google'?gSVG():mSVG();
-  const prov=a.provider==='google'?'Google':'Microsoft';
-  document.getElementById('m-btns').innerHTML=`<button class="oauth-btn" onclick="doOAuth('${accId}')">${icon}Entrar com ${prov}<span style="margin-left:auto;font-size:10px;color:var(--t3)">${a.email}</span></button>`;
+  var a = CONFIG.ACCOUNTS.find(function(x){ return x.id===accId; });
+  if(!a) return;
+  document.getElementById('m-title').textContent = 'Conectar '+a.label;
+  document.getElementById('m-desc').textContent = 'Autentique a conta '+a.email+' para sincronizar calendário.';
+  var icon = a.provider==='google' ? gSVG() : mSVG();
+  var prov = a.provider==='google' ? 'Google' : 'Microsoft';
+  document.getElementById('m-btns').innerHTML =
+    '<button class="oauth-btn" onclick="doOAuth(\''+accId+'\')">'+icon+
+    ' Entrar com '+prov+
+    '<span style="margin-left:auto;font-size:10px;color:var(--t3)">'+a.email+'</span></button>';
   openM('m-oauth');
 }
+
 function doOAuth(accId){
-  const a=CONFIG.ACCOUNTS.find(x=>x.id===accId);
   closeM('m-oauth');
+  var a = CONFIG.ACCOUNTS.find(function(x){ return x.id===accId; });
+  if(!a) return;
   if(a.provider==='google') oauthGoogle(accId);
   else oauthMicrosoft(accId);
 }
 
-/* ─ MODAL NOVO EVENTO ───────────────── */
+function oauthGoogle(accId){
+  var a = CONFIG.ACCOUNTS.find(function(x){ return x.id===accId; });
+  var scopes = encodeURIComponent('https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/gmail.readonly');
+  var redir  = encodeURIComponent(CONFIG.REDIRECT_URI);
+  var state  = encodeURIComponent(JSON.stringify({accId:accId,ts:Date.now()}));
+  var url = 'https://accounts.google.com/o/oauth2/v2/auth'+
+    '?client_id='+CONFIG.GOOGLE_CLIENT_ID+
+    '&redirect_uri='+redir+
+    '&response_type=token'+
+    '&scope='+scopes+
+    '&login_hint='+encodeURIComponent(a.email)+
+    '&state='+state;
+  localStorage.setItem('csh_pending', accId);
+  var popup = window.open(url,'oauth','width=520,height=640,left=400,top=80');
+  watchPopup(popup, accId);
+}
+
+function oauthMicrosoft(accId){
+  if(CONFIG.MICROSOFT_CLIENT_ID === 'SEU_MICROSOFT_CLIENT_ID_AQUI'){
+    toast('Microsoft Client ID não configurado ainda','warn'); return;
+  }
+  var a = CONFIG.ACCOUNTS.find(function(x){ return x.id===accId; });
+  var scopes = encodeURIComponent('Calendars.Read Mail.Read offline_access User.Read');
+  var redir  = encodeURIComponent(CONFIG.REDIRECT_URI);
+  var state  = encodeURIComponent(JSON.stringify({accId:accId,ts:Date.now()}));
+  var url = 'https://login.microsoftonline.com/'+CONFIG.MICROSOFT_TENANT+'/oauth2/v2.0/authorize'+
+    '?client_id='+CONFIG.MICROSOFT_CLIENT_ID+
+    '&response_type=token'+
+    '&redirect_uri='+redir+
+    '&scope='+scopes+
+    '&login_hint='+encodeURIComponent(a.email)+
+    '&state='+state;
+  localStorage.setItem('csh_pending', accId);
+  var popup = window.open(url,'oauth','width=520,height=640,left=400,top=80');
+  watchPopup(popup, accId);
+}
+
+function watchPopup(popup, accId){
+  var timer = setInterval(function(){
+    try {
+      if(!popup || popup.closed){ clearInterval(timer); return; }
+      var h = '';
+      try { h = popup.location.hash || ''; } catch(e){}
+      if(h.includes('access_token')){
+        clearInterval(timer);
+        popup.close();
+        saveToken(h, accId);
+      }
+    } catch(e){}
+  }, 400);
+}
+
+function saveToken(hash, accId){
+  var params = {};
+  hash.replace(/^#/,'').split('&').forEach(function(p){
+    var kv = p.split('='); params[kv[0]] = decodeURIComponent((kv.slice(1).join('=')));
+  });
+  if(!params.access_token) return;
+  var id = accId || localStorage.getItem('csh_pending');
+  if(!id && params.state){ try{ id = JSON.parse(params.state).accId; }catch(e){} }
+  if(!id) return;
+  conn[id] = { token: params.access_token, expires: Date.now()+(parseInt(params.expires_in||3600)*1000) };
+  localStorage.removeItem('csh_pending');
+  save();
+  var a = CONFIG.ACCOUNTS.find(function(x){ return x.id===id; });
+  toast((a?a.label:'Conta')+' conectada com sucesso!','ok');
+  buildSb(); renderToday();
+  if(document.getElementById('view-integracoes').classList.contains('active')) renderInt();
+}
+
+// Handle redirect back to this page (popup receives token in URL hash)
+function handleRedirect(){
+  var hash = location.hash;
+  if(!hash || !hash.includes('access_token')) return;
+  // If this is the popup window, post token to opener and close
+  if(window.opener && !window.opener.closed){
+    try{
+      window.opener.postMessage({type:'csh_token', hash: hash}, '*');
+    }catch(e){}
+    window.close();
+    return;
+  }
+  // If main window received token directly
+  saveToken(hash, null);
+  history.replaceState(null,'',location.pathname);
+}
+
+// ── SYNC ──────────────────────────────────────────────────
+async function syncAcc(accId){
+  var c = conn[accId];
+  if(!c){ toast('Conta não conectada','warn'); return; }
+  if(Date.now() > c.expires){ toast('Token expirado - reconecte','warn'); disconnect(accId); return; }
+  var a = CONFIG.ACCOUNTS.find(function(x){ return x.id===accId; });
+  toast('Sincronizando '+(a?a.label:'conta')+'...','info');
+  try{
+    if(a.provider==='google') await syncGoogle(accId, c.token);
+    else await syncMicrosoft(accId, c.token);
+    save(); renderToday();
+    if(document.getElementById('view-agenda').classList.contains('active')) renderCal();
+    toast((a?a.label:'Conta')+' sincronizada!','ok');
+  }catch(e){ toast('Erro: '+e.message,'warn'); }
+}
+
+async function syncGoogle(accId, token){
+  var now = new Date().toISOString();
+  var end = new Date(Date.now()+30*24*3600000).toISOString();
+  var r = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin='+encodeURIComponent(now)+'&timeMax='+encodeURIComponent(end)+'&singleEvents=true&orderBy=startTime&maxResults=60',{headers:{Authorization:'Bearer '+token}});
+  if(!r.ok) throw new Error('Google API '+r.status);
+  var data = await r.json();
+  var imp = (data.items||[]).map(function(it,i){
+    return {id:9000+i+Math.floor(Math.random()*100),title:it.summary||'(sem título)',date:(it.start.dateTime||it.start.date||'').slice(0,10),time:it.start.dateTime?it.start.dateTime.slice(11,16):'',acc:accId,local:it.location||'',synced:true};
+  });
+  evs = evs.filter(function(e){ return !(e.synced && e.acc===accId); });
+  evs = evs.concat(imp);
+}
+
+async function syncMicrosoft(accId, token){
+  var now = new Date().toISOString();
+  var end = new Date(Date.now()+30*24*3600000).toISOString();
+  var r = await fetch('https://graph.microsoft.com/v1.0/me/calendarView?startDateTime='+now+'&endDateTime='+end+'&$top=60&$orderby=start/dateTime',{headers:{Authorization:'Bearer '+token}});
+  if(!r.ok) throw new Error('MS Graph '+r.status);
+  var data = await r.json();
+  var imp = (data.value||[]).map(function(it,i){
+    return {id:8000+i+Math.floor(Math.random()*100),title:it.subject||'(sem título)',date:(it.start.dateTime||'').slice(0,10),time:(it.start.dateTime||'').slice(11,16),acc:accId,local:(it.location&&it.location.displayName)||'',synced:true};
+  });
+  evs = evs.filter(function(e){ return !(e.synced && e.acc===accId); });
+  evs = evs.concat(imp);
+}
+
+async function syncAll(){
+  var btn = document.getElementById('sync-btn');
+  btn.innerHTML = '<svg class="spinning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.8"/></svg> Sincronizando...';
+  btn.disabled = true;
+  var connected = CONFIG.ACCOUNTS.filter(function(a){ return conn[a.id]; });
+  if(!connected.length) toast('Nenhuma conta conectada','warn');
+  else for(var i=0;i<connected.length;i++) await syncAcc(connected[i].id);
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.8"/></svg> Sincronizar';
+  btn.disabled = false;
+}
+
+function disconnect(accId){
+  delete conn[accId]; save(); buildSb(); renderInt();
+  var a = CONFIG.ACCOUNTS.find(function(x){ return x.id===accId; });
+  toast((a?a.label:'Conta')+' desconectada','info');
+}
+
+// ── MODAL NOVO EVENTO ─────────────────────────────────────
 function openAddModal(){
-  const sel=document.getElementById('ae-acc');
-  sel.innerHTML='<option value="local">Pessoal (local)</option>'+CONFIG.ACCOUNTS.map(a=>`<option value="${a.id}">${a.label} - ${a.email}</option>`).join('');
-  document.getElementById('ae-dat').value=fd(TD);
+  var sel = document.getElementById('ae-acc');
+  sel.innerHTML = '<option value="local">Pessoal (local)</option>'+
+    CONFIG.ACCOUNTS.map(function(a){ return '<option value="'+a.id+'">'+a.label+' - '+a.email+'</option>'; }).join('');
+  document.getElementById('ae-dat').value = fd(TD);
   openM('m-add');
 }
+
 function addEvt(){
-  const t=document.getElementById('ae-tit').value.trim();
-  if(!t){document.getElementById('ae-tit').focus();return;}
-  const nid=evs.reduce((m,e)=>Math.max(m,e.id),0)+1;
+  var t = document.getElementById('ae-tit').value.trim();
+  if(!t){ document.getElementById('ae-tit').focus(); return; }
+  var nid = evs.reduce(function(m,e){ return Math.max(m,e.id); },0)+1;
   evs.push({id:nid,title:t,date:document.getElementById('ae-dat').value,time:document.getElementById('ae-tim').value,local:document.getElementById('ae-loc').value,acc:document.getElementById('ae-acc').value||'local'});
-  save();renderToday();
+  save(); renderToday();
   if(document.getElementById('view-agenda').classList.contains('active')) renderCal();
-  closeM('m-add');document.getElementById('ae-tit').value='';toast('Evento adicionado!','ok');
+  closeM('m-add'); document.getElementById('ae-tit').value='';
+  toast('Evento adicionado!','ok');
 }
 
-/* ─ UI HELPERS ───────────────────────── */
-function openM(id){document.getElementById(id).classList.add('show');}
-function closeM(id){document.getElementById(id).classList.remove('show');}
-document.querySelectorAll('.mbg').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('show');}));
-function toast(msg,type='info'){const el=document.getElementById('toast');el.textContent=msg;el.className=`toast ${type} show`;setTimeout(()=>el.classList.remove('show'),3200);}
-function openSb(){document.getElementById('sb').classList.add('open');document.getElementById('ov').classList.add('show');}
-function closeSb(){document.getElementById('sb').classList.remove('open');document.getElementById('ov').classList.remove('show');}
+// ── UI HELPERS ────────────────────────────────────────────
+function openM(id){ document.getElementById(id).classList.add('show'); }
+function closeM(id){ document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.mbg').forEach(function(el){
+  el.addEventListener('click', function(e){ if(e.target===el) el.classList.remove('show'); });
+});
 
-/* ─ BUILD ACC SELECTS ───────────────── */
+function toast(msg,type){
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast '+(type||'info')+' show';
+  setTimeout(function(){ el.classList.remove('show'); }, 3000);
+}
+
+function openSb(){ document.getElementById('sb').classList.add('open'); document.getElementById('ov').classList.add('show'); }
+function closeSb(){ document.getElementById('sb').classList.remove('open'); document.getElementById('ov').classList.remove('show'); }
+
 function buildSelects(){
-  document.getElementById('p-acc').innerHTML='<option value="local">Pessoal</option>'+CONFIG.ACCOUNTS.map(a=>`<option value="${a.id}">${a.label}</option>`).join('');
+  document.getElementById('p-acc').innerHTML = '<option value="local">Pessoal</option>'+
+    CONFIG.ACCOUNTS.map(function(a){ return '<option value="'+a.id+'">'+a.label+'</option>'; }).join('');
 }
 
-/* ─ SVG INLINE NO HTML (evita escaping) */
-function gSVG(){return'<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#4285F4" d="M47.5 24.5c0-1.7-.1-3.3-.4-4.8H24v9.1h13.1c-.6 3-2.3 5.5-4.9 7.2v6h7.9c4.6-4.2 7.4-10.5 7.4-17.5z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.8-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.1 2.3-6.2 0-11.5-4.2-13.4-9.9H2.6v6.2C6.5 42.5 14.7 48 24 48z"/><path fill="#FBBC04" d="M10.6 28.6c-.5-1.4-.8-2.9-.8-4.6s.3-3.2.8-4.6v-6.2H2.6C1 16.5 0 20.1 0 24s1 7.5 2.6 10.8l8-6.2z"/><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.5l6.8-6.8C35.9 2.4 30.4 0 24 0 14.7 0 6.5 5.5 2.6 13.2l8 6.2C12.5 13.7 17.8 9.5 24 9.5z"/></svg>';}
-function mSVG(){return'<svg width="18" height="18" viewBox="0 0 23 23"><path fill="#f35325" d="M1 1h10v10H1z"/><path fill="#81bc06" d="M12 1h10v10H12z"/><path fill="#05a6f0" d="M1 12h10v10H1z"/><path fill="#ffba08" d="M12 12h10v10H12z"/></svg>';}
-
-/* ─ INIT ─────────────────────────────── */
-var APP_READY = false;
-
-// Listen for OAuth token from popup - only process after app is initialized
+// Listen for token posted by popup
 window.addEventListener('message', function(e){
-  if(e.data && e.data.type==='oauth_token'){
-    if(APP_READY){
-      processToken('#'+e.data.hash, e.data.accId);
-    } else {
-      // Queue it for after init
-      setTimeout(function(){
-        processToken('#'+e.data.hash, e.data.accId);
-      }, 200);
-    }
+  if(e.data && e.data.type==='csh_token'){
+    saveToken(e.data.hash, null);
   }
 });
 
+// ── INIT ──────────────────────────────────────────────────
+handleRedirect();
 buildSb();
 buildSelects();
 renderToday();
-document.getElementById('tt').innerHTML=`Hoje <span>${fmtLbl()}</span>`;
-handleRedirect();
-APP_READY = true;
+document.getElementById('tt').innerHTML = 'Hoje <span>'+fmtLbl()+'</span>';
 </script>
 </body>
 </html>
