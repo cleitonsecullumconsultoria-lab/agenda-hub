@@ -238,6 +238,10 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
 
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinning{animation:spin 1s linear infinite;display:inline-block}
+.rel-table{width:100%;border-collapse:collapse;font-size:12px}
+.rel-table th{text-align:left;padding:8px 6px;font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid var(--bd);white-space:nowrap}
+.rel-table td{padding:8px 6px;border-bottom:1px solid var(--bd);vertical-align:top}
+.rel-table tr:last-child td{border:none}
 </style>
 </head>
 <body>
@@ -262,6 +266,10 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
     <div class="ni" onclick="go('pendencias')" id="nav-pendencias">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       Pendências<span class="nbadge" id="b-pend">0</span>
+    </div>
+    <div class="ni" onclick="go('relatorio')" id="nav-relatorio">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Relatório
     </div>
     <div class="ni" onclick="go('integracoes')" id="nav-integracoes">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
@@ -351,9 +359,27 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
         <select class="fi" id="p-fil" onchange="renderPend()" style="width:auto;flex:none;padding:5px 9px;font-size:11px;min-width:auto">
           <option value="todas">Todas</option><option value="alta">Alta</option><option value="abertas">Abertas</option><option value="concluidas">Concluídas</option>
         </select>
+        <button class="btn sm" onclick="exportExcel(false)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Excel</button>
       </div>
       <div id="pend-list"></div>
     </div>
+  </div>
+
+  <!-- RELATÓRIO -->
+  <div class="view" id="view-relatorio">
+    <div class="card mb16">
+      <div class="ch">Filtros do relatório</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+        <div style="flex:1;min-width:110px"><div style="font-size:11px;color:var(--t3);margin-bottom:5px">Status</div><select class="fi" id="rel-st"><option value="todas">Todas</option><option value="abertas">Abertas</option><option value="concluidas">Concluídas</option></select></div>
+        <div style="flex:1;min-width:110px"><div style="font-size:11px;color:var(--t3);margin-bottom:5px">Prioridade</div><select class="fi" id="rel-pr"><option value="todas">Todas</option><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></select></div>
+        <div style="flex:1;min-width:110px"><div style="font-size:11px;color:var(--t3);margin-bottom:5px">Categoria</div><select class="fi" id="rel-ca"><option value="todas">Todas</option><option value="fiscal">Fiscal</option><option value="financeiro">Financeiro</option><option value="contabil">Contábil</option><option value="rh">RH/CSC</option><option value="pessoal">Pessoal</option><option value="outros">Outros</option></select></div>
+        <div style="flex:1;min-width:110px"><div style="font-size:11px;color:var(--t3);margin-bottom:5px">De</div><input type="date" class="fi" id="rel-de"></div>
+        <div style="flex:1;min-width:110px"><div style="font-size:11px;color:var(--t3);margin-bottom:5px">Até</div><input type="date" class="fi" id="rel-at"></div>
+        <button class="btn pri" onclick="renderRel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Filtrar</button>
+        <button class="btn" onclick="exportExcel(true)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Excel</button>
+      </div>
+    </div>
+    <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="ch" style="margin:0">Resultado</div><span id="rel-count" style="font-size:11px;color:var(--t3)"></span></div><div id="rel-body" style="overflow-x:auto"></div></div>
   </div>
 
   <!-- INTEGRAÇÕES -->
@@ -414,6 +440,7 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
   <div class="confirm-box">
     <h4 id="confirm-title">Confirmar</h4>
     <p id="confirm-msg">Tem certeza?</p>
+    <div style="margin:12px 0"><label style="font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px">O que foi realizado</label><textarea id="confirm-obs" class="fi" rows="3" placeholder="Descreva o resultado obtido..." style="width:100%;resize:vertical;font-family:var(--ff)"></textarea></div>
     <div class="confirm-actions">
       <button class="btn" onclick="closeConfirm()" style="flex:1">Cancelar</button>
       <button class="btn danger" id="confirm-ok" style="flex:1">Confirmar</button>
@@ -562,11 +589,12 @@ function go(v){
   document.querySelectorAll('.ni').forEach(function(e){ e.classList.remove('active'); });
   document.getElementById('view-'+v).classList.add('active');
   document.getElementById('nav-'+v).classList.add('active');
-  var lbl = {hoje:'Hoje',agenda:'Agenda',pendencias:'Pendências',integracoes:'Integrações'};
+  var lbl = {hoje:'Hoje',agenda:'Agenda',pendencias:'Pendências',relatorio:'Relatório',integracoes:'Integrações'};
   document.getElementById('tt').innerHTML = lbl[v] + (v==='hoje' ? ' <span>'+fmtLbl()+'</span>' : '');
   if(v==='agenda') renderCal();
   if(v==='pendencias') renderPend();
   if(v==='integracoes') renderInt();
+  if(v==='relatorio') renderRel();
   closeSb();
 }
 
@@ -691,7 +719,8 @@ function renderPend(){
         '<span class="tag cat">'+p.cat+'</span>'+
         '<span class="esrc" style="background:'+col+'22;color:'+col+';font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600">'+lbl+'</span>'+
         (p.date?'<span class="pidate">'+dp(p.date)+'</span>':'')+
-        '</div></div>'+
+        '</div>'+(p.obs?'<div style="font-size:11px;color:var(--t2);margin-top:5px;padding:5px 8px;background:var(--bg3);border-radius:6px;border-left:2px solid var(--green)"><b>Obs:</b> '+p.obs+'</div>':'')+
+        '</div>'+
         '<button class="ibt" onclick="openEditPend('+p.id+')" title="Editar" style="opacity:.5">'+
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'+
         '</button>'+
@@ -735,10 +764,11 @@ function confirmClose(id, cb){
   showConfirm(
     'Encerrar pendência?',
     '"'+p.title+'" será marcada como concluída.',
-    function(){
-      p.done = true;
+    function(obs){
+      p.done=true; p.obs=obs||''; p.closedAt=new Date().toISOString();
       save(); renderToday();
       if(document.getElementById('view-pendencias').classList.contains('active')) renderPend();
+      toast('Pendência concluída!','ok');
     }
   );
 }
@@ -760,14 +790,17 @@ function showConfirm(title, msg, cb){
   confirmCallback = cb;
   document.getElementById('confirm-title').textContent = title;
   document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-obs').value='';
   document.getElementById('m-confirm').classList.add('show');
+  setTimeout(function(){document.getElementById('confirm-obs').focus();},150);
 }
 function closeConfirm(){
   confirmCallback = null;
   document.getElementById('m-confirm').classList.remove('show');
 }
 document.getElementById('confirm-ok').addEventListener('click', function(){
-  if(confirmCallback) confirmCallback();
+  var obs=document.getElementById('confirm-obs').value.trim();
+  if(confirmCallback) confirmCallback(obs);
   closeConfirm();
 });
 
@@ -1093,6 +1126,65 @@ window.addEventListener('message', function(e){
     if(id2){ localStorage.removeItem('csh_just_connected'); var a2=CONFIG.ACCOUNTS.find(function(x){return x.id===id2;}); toast((a2?a2.label:'Conta')+' conectada!','ok'); }
   }
 });
+
+// ── RELATÓRIO ─────────────────────────────────────────────
+function filterRel(){
+  var rs=document.getElementById('rel-st').value, rp=document.getElementById('rel-pr').value;
+  var rc=document.getElementById('rel-ca').value, rd=document.getElementById('rel-de').value, ra=document.getElementById('rel-at').value;
+  return pend.filter(function(p){
+    if(rs==='abertas'&&p.done) return false;
+    if(rs==='concluidas'&&!p.done) return false;
+    if(rp!=='todas'&&p.prio!==rp) return false;
+    if(rc!=='todas'&&p.cat!==rc) return false;
+    if(rd&&p.date&&p.date<rd) return false;
+    if(ra&&p.date&&p.date>ra) return false;
+    return true;
+  }).sort(function(a,b){var o={alta:0,media:1,baixa:2};return((a.done?10:0)+o[a.prio])-((b.done?10:0)+o[b.prio]);});
+}
+function renderRel(){
+  var list=filterRel();
+  document.getElementById('rel-count').textContent=list.length+' registro(s)';
+  if(!list.length){document.getElementById('rel-body').innerHTML='<div class="empty">Nenhum registro encontrado</div>';return;}
+  var pl={alta:'Alta',media:'Média',baixa:'Baixa'}, pc={alta:'var(--red)',media:'var(--amber)',baixa:'var(--green)'};
+  var h='<table class="rel-table"><thead><tr><th>Título</th><th>Prior.</th><th>Cat.</th><th>Conta</th><th>Prazo</th><th>Status</th><th>Conclusão</th><th>Observação</th></tr></thead><tbody>';
+  list.forEach(function(p){
+    var lbl=p.acc?(AM[p.acc]?AM[p.acc].label:p.acc):'Pessoal';
+    var col=p.acc&&AM[p.acc]?AM[p.acc].color:'var(--t2)';
+    var soft=p.acc&&AM[p.acc]?AM[p.acc].soft:'var(--bg4)';
+    h+='<tr style="background:'+(p.done?'var(--bg3)':'var(--bg2)')+'">'+
+      '<td style="max-width:220px"><div style="'+(p.done?'text-decoration:line-through;color:var(--t3);':'')+'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:210px" title="'+p.title+'">'+p.title+'</div></td>'+
+      '<td><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;background:'+pc[p.prio]+'22;color:'+pc[p.prio]+'">'+pl[p.prio]+'</span></td>'+
+      '<td style="color:var(--t2)">'+p.cat+'</td>'+
+      '<td><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;background:'+soft+';color:'+col+'">'+lbl+'</span></td>'+
+      '<td style="font-family:var(--fm);white-space:nowrap">'+dp(p.date)+'</td>'+
+      '<td><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;background:'+(p.done?'var(--gs)':'var(--bs)')+';color:'+(p.done?'var(--green)':'var(--blue)')+'>'+(p.done?'Concluída':'Aberta')+'</span></td>'+
+      '<td style="font-family:var(--fm);white-space:nowrap;color:var(--t3)">'+(p.closedAt?p.closedAt.slice(0,10):'')+'</td>'+
+      '<td style="font-size:11px;color:var(--t2);max-width:200px">'+(p.obs||'')+'</td></tr>';
+  });
+  document.getElementById('rel-body').innerHTML=h+'</tbody></table>';
+}
+function exportExcel(fromRel){
+  var list=fromRel?filterRel():pend;
+  var BOM='﻿';
+  var hdr=['ID','Título','Prioridade','Categoria','Conta','Data Prazo','Status','Data Conclusão','Observação'].join(';');
+  var rows=list.map(function(p){
+    var lbl=p.acc?(AM[p.acc]?AM[p.acc].label:p.acc):'Pessoal';
+    return [p.id,'"'+(p.title||'').replace(/"/g,'""')+'"',
+      p.prio==='alta'?'Alta':p.prio==='media'?'Média':'Baixa',
+      p.cat,lbl,p.date||'',p.done?'Concluída':'Aberta',
+      p.closedAt?p.closedAt.slice(0,10):'',
+      '"'+(p.obs||'').replace(/"/g,'""')+'"'].join(';');
+  });
+  var csv=[BOM,hdr].concat(rows).join('\n');
+  var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;
+  var now=new Date();
+  a.download='pendencias_'+now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'.csv';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('Exportado!','ok');
+}
 
 // ── INIT ──────────────────────────────────────────────────
 handleRedirect(); // saves token to conn, does NOT render
