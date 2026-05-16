@@ -211,6 +211,24 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
 .empty{text-align:center;padding:28px 12px;color:var(--t3);font-size:13px}
 .empty svg{width:26px;height:26px;margin:0 auto 10px;display:block;opacity:.2}
 
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;justify-content:space-between}
+.filter-group{display:flex;align-items:center;gap:4px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:3px}
+.fbt{background:none;border:none;padding:5px 12px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;color:var(--t2);font-family:var(--ff);transition:all .15s;white-space:nowrap}
+.fbt:hover{color:var(--t);background:var(--bg4)}
+.fbt.active{background:var(--blue);color:#fff}
+
+/* CONFIRM MODAL */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:600;display:none;align-items:center;justify-content:center;padding:16px}
+.confirm-overlay.show{display:flex}
+.confirm-box{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rx);padding:24px;max-width:360px;width:100%;box-shadow:var(--sh);animation:fup .18s ease}
+.confirm-box h4{font-family:var(--fh);font-size:16px;font-weight:700;margin-bottom:8px}
+.confirm-box p{font-size:13px;color:var(--t2);margin-bottom:20px;line-height:1.6}
+.confirm-actions{display:flex;gap:8px}
+
+/* EDIT MODAL */
+.edit-row{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+
 /* URI HELPER */
 .uri-box{background:#fffbeb;border:1px solid var(--amber);border-radius:var(--rl);padding:13px 16px;margin-bottom:12px}
 .uri-box .uri-lbl{font-size:10px;font-weight:600;color:var(--amber);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
@@ -272,14 +290,27 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
 
   <!-- HOJE -->
   <div class="view active" id="view-hoje">
+    <div class="filter-bar">
+      <div class="filter-group">
+        <button class="fbt active" onclick="setDateFilter('hoje',this)">Hoje</button>
+        <button class="fbt" onclick="setDateFilter('semana',this)">Esta semana</button>
+        <button class="fbt" onclick="setDateFilter('mes',this)">Este mês</button>
+        <button class="fbt" onclick="setDateFilter('todos',this)">Tudo</button>
+      </div>
+      <div class="filter-group">
+        <button class="fbt" onclick="setPendFilter('abertas',this)" id="fpend-abertas">Abertas</button>
+        <button class="fbt active" onclick="setPendFilter('todas',this)" id="fpend-todas">Todas</button>
+        <button class="fbt" onclick="setPendFilter('concluidas',this)" id="fpend-concluidas">Concluídas</button>
+      </div>
+    </div>
     <div class="stats">
-      <div class="stat blue"><div class="sn" id="se">0</div><div class="sl">Eventos hoje</div></div>
-      <div class="stat green"><div class="sn" id="sp">0</div><div class="sl">Pendências</div></div>
+      <div class="stat blue"><div class="sn" id="se">0</div><div class="sl">Eventos</div></div>
+      <div class="stat green"><div class="sn" id="sp">0</div><div class="sl">Pendências abertas</div></div>
       <div class="stat red"><div class="sn" id="sa">0</div><div class="sl">Alta prioridade</div></div>
     </div>
     <div class="g2">
-      <div class="card"><div class="ch">Compromissos de hoje</div><div id="ev-hoje"></div></div>
-      <div class="card"><div class="ch">Próximas pendências</div><div id="pn-hoje"></div></div>
+      <div class="card"><div class="ch">Compromissos <span id="ch-date-lbl" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--blue)">de hoje</span></div><div id="ev-hoje"></div></div>
+      <div class="card"><div class="ch">Pendências <span id="ch-pend-lbl" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--blue)"></span></div><div id="pn-hoje"></div></div>
     </div>
   </div>
 
@@ -320,6 +351,10 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
         <select class="fi" id="p-fil" onchange="renderPend()" style="width:auto;flex:none;padding:5px 9px;font-size:11px;min-width:auto">
           <option value="todas">Todas</option><option value="alta">Alta</option><option value="abertas">Abertas</option><option value="concluidas">Concluídas</option>
         </select>
+        <button class="btn sm" onclick="exportExcel()" style="white-space:nowrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Exportar Excel
+        </button>
       </div>
       <div id="pend-list"></div>
     </div>
@@ -378,6 +413,58 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
 
 <div class="toast" id="toast"></div>
 
+<!-- CONFIRM MODAL -->
+<div class="confirm-overlay" id="m-confirm">
+  <div class="confirm-box">
+    <h4 id="confirm-title">Confirmar</h4>
+    <p id="confirm-msg">Tem certeza?</p>
+    <div id="confirm-obs-wrap" style="display:none;margin-bottom:14px">
+      <label style="font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Observação do que foi realizado</label>
+      <textarea id="confirm-obs" class="fi" rows="3" placeholder="Descreva o que foi feito, decisão tomada, resultado obtido..." style="width:100%;resize:vertical;min-height:72px;font-family:var(--ff)"></textarea>
+    </div>
+    <div class="confirm-actions">
+      <button class="btn" onclick="closeConfirm()" style="flex:1">Cancelar</button>
+      <button class="btn pri" id="confirm-ok" style="flex:2">Concluir pendência</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PENDING MODAL -->
+<div class="mbg" id="m-edit">
+  <div class="mbox">
+    <button class="ibt mclose" onclick="closeM('m-edit')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <h3>Editar pendência</h3>
+    <p>Altere os dados antes de salvar.</p>
+    <input type="hidden" id="edit-id">
+    <div class="edit-row">
+      <input type="text" class="fi" id="edit-tit" placeholder="Descrição..." style="width:100%">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select class="fi" id="edit-prio" style="flex:1">
+          <option value="alta">Alta prioridade</option>
+          <option value="media">Média prioridade</option>
+          <option value="baixa">Baixa prioridade</option>
+        </select>
+        <select class="fi" id="edit-cat" style="flex:1">
+          <option value="fiscal">Fiscal / Tributário</option>
+          <option value="financeiro">Financeiro</option>
+          <option value="contabil">Contábil</option>
+          <option value="rh">RH / CSC</option>
+          <option value="pessoal">Pessoal</option>
+          <option value="outros">Outros</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input type="date" class="fi" id="edit-dat" style="flex:1">
+        <select class="fi" id="edit-acc" style="flex:1"></select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" onclick="closeM('m-edit')" style="flex:1">Cancelar</button>
+      <button class="btn pri" onclick="savePendEdit()" style="flex:2">Salvar alterações</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── HELPERS ──────────────────────────────────────────────
 function fd(d){ return (d instanceof Date ? d : new Date(d)).toISOString().slice(0,10); }
@@ -389,17 +476,19 @@ function mSVG(){ return '<svg width="18" height="18" viewBox="0 0 23 23"><path f
 // ── STATE ─────────────────────────────────────────────────
 var TD    = new Date();
 var calM  = new Date(TD.getFullYear(), TD.getMonth(), 1);
-function safeGet(key, fallback){
-  try{ var v = JSON.parse(localStorage.getItem(key)); return (v && typeof v === 'object') ? v : fallback; }
-  catch(e){ return fallback; }
+function safeGet(key){
+  try{ var v = JSON.parse(localStorage.getItem(key)); return v; }
+  catch(e){ return null; }
 }
-var conn  = safeGet('csh_conn', {});
-var ctog  = safeGet('csh_ctog', {});
-var evs   = safeGet('csh_evs',  null) || defEvs();
-var pend  = safeGet('csh_pend', null) || defPend();
+var conn  = safeGet('csh_conn') || {};
+var ctog  = safeGet('csh_ctog') || {};
+var evs   = safeGet('csh_evs')  || defEvs();
+var pend  = safeGet('csh_pend') || defPend();
 
 var MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 var WDAYS  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+var dateFilter = 'hoje';
+var pendFilterHome = 'todas';
 
 var AM = {};
 CONFIG.ACCOUNTS.forEach(function(a){ AM[a.id] = a; });
@@ -489,6 +578,42 @@ function go(v){
   closeSb();
 }
 
+// ── FILTER FUNCTIONS ─────────────────────────────────────
+function setDateFilter(f, btn){
+  dateFilter = f;
+  document.querySelectorAll('.filter-group:first-child .fbt').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  var lbls = {hoje:'de hoje', semana:'desta semana', mes:'deste mês', todos:'todos'};
+  document.getElementById('ch-date-lbl').textContent = lbls[f];
+  renderToday();
+}
+
+function setPendFilter(f, btn){
+  pendFilterHome = f;
+  document.querySelectorAll('.filter-group:last-child .fbt').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  var lbls = {todas:'', abertas:'abertas', concluidas:'concluídas'};
+  document.getElementById('ch-pend-lbl').textContent = lbls[f];
+  renderToday();
+}
+
+function getDateRange(){
+  var start = new Date(TD); start.setHours(0,0,0,0);
+  var end = new Date(TD); end.setHours(23,59,59,999);
+  if(dateFilter === 'semana'){
+    var day = TD.getDay();
+    start = new Date(TD); start.setDate(TD.getDate()-day); start.setHours(0,0,0,0);
+    end = new Date(start); end.setDate(start.getDate()+6); end.setHours(23,59,59,999);
+  } else if(dateFilter === 'mes'){
+    start = new Date(TD.getFullYear(), TD.getMonth(), 1);
+    end = new Date(TD.getFullYear(), TD.getMonth()+1, 0); end.setHours(23,59,59,999);
+  } else if(dateFilter === 'todos'){
+    start = new Date(2000,0,1);
+    end = new Date(2099,11,31);
+  }
+  return {start: fd(start), end: fd(end)};
+}
+
 // ── RENDER: HOJE ──────────────────────────────────────────
 function visAccs(){
   return CONFIG.ACCOUNTS.map(function(a){ return a.id; }).concat(['local']).filter(function(id){ return ctog[id] !== false; });
@@ -496,8 +621,10 @@ function visAccs(){
 
 function renderToday(){
   if(!evs || !pend) return;
-  var ts = fd(TD), va = visAccs();
-  var te = evs.filter(function(e){ return e.date===ts && va.includes(e.acc||'local'); });
+  var va = visAccs();
+  var range = getDateRange();
+
+  var te = evs.filter(function(e){ return e.date>=range.start && e.date<=range.end && va.includes(e.acc||'local'); });
   var op = pend.filter(function(p){ return !p.done; });
   var hi = pend.filter(function(p){ return p.prio==='alta' && !p.done; });
 
@@ -523,17 +650,25 @@ function renderToday(){
   }
   document.getElementById('ev-hoje').innerHTML = eh;
 
-  var up = pend.filter(function(p){ return !p.done; }).sort(function(a,b){ return a.date.localeCompare(b.date); }).slice(0,5);
+  var up = pend.filter(function(p){
+    if(pendFilterHome==='abertas') return !p.done;
+    if(pendFilterHome==='concluidas') return p.done;
+    return true;
+  }).sort(function(a,b){ return a.date.localeCompare(b.date); }).slice(0,8);
   var ph = '';
   if(!up.length){
     ph = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 11 12 14 22 4"/></svg>Tudo em dia!</div>';
   } else {
     up.forEach(function(p){
-      ph += '<div class="pi"><input type="checkbox" onchange="chk('+p.id+',this)">'+
+      ph += '<div class="pi">'+
+        '<input type="checkbox" onchange="confirmClose('+p.id+',this)">'+
         '<div class="pi-body"><div class="pit">'+p.title+'</div>'+
         '<div class="pim"><span class="tag '+p.prio+'">'+(p.prio==='alta'?'Alta':p.prio==='media'?'Média':'Baixa')+'</span>'+
         '<span class="tag cat">'+p.cat+'</span>'+
-        '<span class="pidate">'+dp(p.date)+'</span></div></div></div>';
+        '<span class="pidate">'+dp(p.date)+'</span></div></div>'+
+        '<button class="ibt" onclick="openEditPend('+p.id+')" title="Editar" style="opacity:.5">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'+
+        '</button></div>';
     });
   }
   document.getElementById('pn-hoje').innerHTML = ph;
@@ -557,14 +692,22 @@ function renderPend(){
   } else {
     list.forEach(function(p){
       var col=ac(p.acc||'local'), lbl=al(p.acc||'local');
-      h += '<div class="pi"><input type="checkbox" '+(p.done?'checked':'')+' onchange="chk('+p.id+',this)">'+
+      h += '<div class="pi">'+
+        '<input type="checkbox" '+(p.done?'checked':'')+' onchange="confirmClose('+p.id+',this)">'+
         '<div class="pi-body"><div class="pit '+(p.done?'done':'')+'">'+p.title+'</div>'+
         '<div class="pim"><span class="tag '+p.prio+'">'+(p.prio==='alta'?'Alta':p.prio==='media'?'Média':'Baixa')+'</span>'+
         '<span class="tag cat">'+p.cat+'</span>'+
         '<span class="esrc" style="background:'+col+'22;color:'+col+';font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600">'+lbl+'</span>'+
         (p.date?'<span class="pidate">'+dp(p.date)+'</span>':'')+
-        '</div></div>'+
-        '<button class="ibt" onclick="delP('+p.id+')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
+        '</div>'+
+        (p.obs?'<div style="font-size:11px;color:var(--t2);margin-top:4px;padding:5px 8px;background:var(--bg3);border-radius:6px;border-left:2px solid var(--green)"><strong>Obs:</strong> '+p.obs+'</div>':'')+
+        '</div>'+
+        '<button class="ibt" onclick="openEditPend('+p.id+')" title="Editar" style="opacity:.5">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'+
+        '</button>'+
+        '<button class="ibt" onclick="confirmDelete('+p.id+')" title="Excluir" style="opacity:.4">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>'+
+        '</button></div>';
     });
   }
   document.getElementById('pend-list').innerHTML = h;
@@ -589,6 +732,135 @@ function chk(id,cb){
 function delP(id){
   pend = pend.filter(function(p){ return p.id!==id; });
   save(); renderPend(); renderToday();
+}
+
+function exportExcel(){
+  // Build CSV with BOM for Excel UTF-8
+  var BOM = '﻿';
+  var headers = ['ID','Título','Prioridade','Categoria','Conta','Data Prazo','Status','Data Conclusão','Observação'];
+  var rows = pend.map(function(p){
+    var prioLbl = p.prio==='alta'?'Alta':p.prio==='media'?'Média':'Baixa';
+    var statusLbl = p.done ? 'Concluída' : 'Aberta';
+    var contaLbl = p.acc ? (AM[p.acc]?AM[p.acc].label:p.acc) : 'Pessoal';
+    var closedAt = p.closedAt ? p.closedAt.slice(0,10) : '';
+    var obs = (p.obs||'').replace(/"/g,'""');
+    return [
+      p.id,
+      '"'+(p.title||'').replace(/"/g,'""')+'"',
+      prioLbl,
+      p.cat||'',
+      contaLbl,
+      p.date||'',
+      statusLbl,
+      closedAt,
+      '"'+obs+'"'
+    ].join(';');
+  });
+  var csv = BOM + headers.join(';') + '
+' + rows.join('
+');
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  var now = new Date();
+  var fname = 'pendencias_'+now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'.csv';
+  a.download = fname;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('Exportado: '+fname,'ok');
+}
+
+// Confirm before closing/checking a pending item
+function confirmClose(id, cb){
+  var p = pend.find(function(x){ return x.id===id; });
+  if(!p) return;
+  if(!cb.checked){
+    p.done=false; p.closedAt=null;
+    save(); renderToday();
+    if(document.getElementById('view-pendencias').classList.contains('active')) renderPend();
+    return;
+  }
+  cb.checked = false;
+  showConfirm(
+    'Encerrar pendência?',
+    '"'+p.title+'"',
+    function(obs){
+      p.done = true;
+      p.obs = obs || '';
+      p.closedAt = new Date().toISOString();
+      save(); renderToday();
+      if(document.getElementById('view-pendencias').classList.contains('active')) renderPend();
+      toast('Pendência concluída!','ok');
+    },
+    true // show obs field
+  );
+}
+
+// Confirm before deleting
+function confirmDelete(id){
+  var p = pend.find(function(x){ return x.id===id; });
+  if(!p) return;
+  showConfirm(
+    'Excluir pendência?',
+    '"'+p.title+'" será removida permanentemente.',
+    function(){ delP(id); }
+  );
+}
+
+// Show confirm modal
+var confirmCallback = null;
+function showConfirm(title, msg, cb, showObs){
+  confirmCallback = cb;
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-obs').value = '';
+  document.getElementById('confirm-obs-wrap').style.display = showObs ? 'block' : 'none';
+  document.getElementById('confirm-ok').textContent = showObs ? 'Concluir pendência' : 'Confirmar';
+  document.getElementById('m-confirm').classList.add('show');
+  if(showObs) setTimeout(function(){ document.getElementById('confirm-obs').focus(); }, 100);
+}
+function closeConfirm(){
+  confirmCallback = null;
+  document.getElementById('m-confirm').classList.remove('show');
+}
+document.getElementById('confirm-ok').addEventListener('click', function(){
+  var obs = document.getElementById('confirm-obs').value.trim();
+  if(confirmCallback) confirmCallback(obs);
+  closeConfirm();
+});
+
+// Edit pending
+function openEditPend(id){
+  var p = pend.find(function(x){ return x.id===id; });
+  if(!p) return;
+  document.getElementById('edit-id').value = p.id;
+  document.getElementById('edit-tit').value = p.title;
+  document.getElementById('edit-prio').value = p.prio;
+  document.getElementById('edit-cat').value = p.cat;
+  document.getElementById('edit-dat').value = p.date||'';
+  // populate acc select
+  var sel = document.getElementById('edit-acc');
+  sel.innerHTML = '<option value="local">Pessoal</option>'+
+    CONFIG.ACCOUNTS.map(function(a){ return '<option value="'+a.id+'"'+(p.acc===a.id?' selected':'')+'>'+a.label+'</option>'; }).join('');
+  if(p.acc==='local') sel.value='local';
+  openM('m-edit');
+}
+
+function savePendEdit(){
+  var id = parseInt(document.getElementById('edit-id').value);
+  var p = pend.find(function(x){ return x.id===id; });
+  if(!p) return;
+  p.title = document.getElementById('edit-tit').value.trim() || p.title;
+  p.prio  = document.getElementById('edit-prio').value;
+  p.cat   = document.getElementById('edit-cat').value;
+  p.date  = document.getElementById('edit-dat').value;
+  p.acc   = document.getElementById('edit-acc').value;
+  save(); closeM('m-edit');
+  renderPend(); renderToday();
+  toast('Pendência atualizada!','ok');
 }
 
 // ── RENDER: AGENDA ────────────────────────────────────────
@@ -749,10 +1021,8 @@ function saveToken(hash, accId){
   conn[id] = { token: params.access_token, expires: Date.now()+(parseInt(params.expires_in||3600)*1000) };
   localStorage.removeItem('csh_pending');
   save();
-  var a = CONFIG.ACCOUNTS.find(function(x){ return x.id===id; });
-  toast((a?a.label:'Conta')+' conectada com sucesso!','ok');
-  buildSb(); renderToday();
-  if(document.getElementById('view-integracoes').classList.contains('active')) renderInt();
+  // Store connected account id to show toast after full init
+  localStorage.setItem('csh_just_connected', id);
 }
 
 // Handle redirect back to this page (popup receives token in URL hash)
@@ -877,15 +1147,27 @@ function buildSelects(){
 window.addEventListener('message', function(e){
   if(e.data && e.data.type==='csh_token'){
     saveToken(e.data.hash, null);
+    // Re-render UI since we are already initialized
+    buildSb(); renderToday();
+    if(document.getElementById('view-integracoes').classList.contains('active')) renderInt();
+    var id2 = localStorage.getItem('csh_just_connected');
+    if(id2){ localStorage.removeItem('csh_just_connected'); var a2=CONFIG.ACCOUNTS.find(function(x){return x.id===id2;}); toast((a2?a2.label:'Conta')+' conectada!','ok'); }
   }
 });
 
 // ── INIT ──────────────────────────────────────────────────
-handleRedirect();
 buildSb();
 buildSelects();
 renderToday();
 document.getElementById('tt').innerHTML = 'Hoje <span>'+fmtLbl()+'</span>';
+handleRedirect(); // AFTER full init - saves token and shows toast
+var justConn = localStorage.getItem('csh_just_connected');
+if(justConn){
+  localStorage.removeItem('csh_just_connected');
+  var justA = CONFIG.ACCOUNTS.find(function(x){ return x.id===justConn; });
+  toast((justA?justA.label:'Conta')+' conectada com sucesso!','ok');
+  buildSb(); renderToday();
+}
 </script>
 </body>
 </html>
