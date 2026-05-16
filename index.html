@@ -351,10 +351,6 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
         <select class="fi" id="p-fil" onchange="renderPend()" style="width:auto;flex:none;padding:5px 9px;font-size:11px;min-width:auto">
           <option value="todas">Todas</option><option value="alta">Alta</option><option value="abertas">Abertas</option><option value="concluidas">Concluídas</option>
         </select>
-        <button class="btn sm" onclick="exportExcel()" style="white-space:nowrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-          Exportar Excel
-        </button>
       </div>
       <div id="pend-list"></div>
     </div>
@@ -418,13 +414,9 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
   <div class="confirm-box">
     <h4 id="confirm-title">Confirmar</h4>
     <p id="confirm-msg">Tem certeza?</p>
-    <div id="confirm-obs-wrap" style="display:none;margin-bottom:14px">
-      <label style="font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Observação do que foi realizado</label>
-      <textarea id="confirm-obs" class="fi" rows="3" placeholder="Descreva o que foi feito, decisão tomada, resultado obtido..." style="width:100%;resize:vertical;min-height:72px;font-family:var(--ff)"></textarea>
-    </div>
     <div class="confirm-actions">
       <button class="btn" onclick="closeConfirm()" style="flex:1">Cancelar</button>
-      <button class="btn pri" id="confirm-ok" style="flex:2">Concluir pendência</button>
+      <button class="btn danger" id="confirm-ok" style="flex:1">Confirmar</button>
     </div>
   </div>
 </div>
@@ -699,9 +691,7 @@ function renderPend(){
         '<span class="tag cat">'+p.cat+'</span>'+
         '<span class="esrc" style="background:'+col+'22;color:'+col+';font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600">'+lbl+'</span>'+
         (p.date?'<span class="pidate">'+dp(p.date)+'</span>':'')+
-        '</div>'+
-        (p.obs?'<div style="font-size:11px;color:var(--t2);margin-top:4px;padding:5px 8px;background:var(--bg3);border-radius:6px;border-left:2px solid var(--green)"><strong>Obs:</strong> '+p.obs+'</div>':'')+
-        '</div>'+
+        '</div></div>'+
         '<button class="ibt" onclick="openEditPend('+p.id+')" title="Editar" style="opacity:.5">'+
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'+
         '</button>'+
@@ -734,68 +724,22 @@ function delP(id){
   save(); renderPend(); renderToday();
 }
 
-function exportExcel(){
-  // Build CSV with BOM for Excel UTF-8
-  var BOM = '﻿';
-  var headers = ['ID','Título','Prioridade','Categoria','Conta','Data Prazo','Status','Data Conclusão','Observação'];
-  var rows = pend.map(function(p){
-    var prioLbl = p.prio==='alta'?'Alta':p.prio==='media'?'Média':'Baixa';
-    var statusLbl = p.done ? 'Concluída' : 'Aberta';
-    var contaLbl = p.acc ? (AM[p.acc]?AM[p.acc].label:p.acc) : 'Pessoal';
-    var closedAt = p.closedAt ? p.closedAt.slice(0,10) : '';
-    var obs = (p.obs||'').replace(/"/g,'""');
-    return [
-      p.id,
-      '"'+(p.title||'').replace(/"/g,'""')+'"',
-      prioLbl,
-      p.cat||'',
-      contaLbl,
-      p.date||'',
-      statusLbl,
-      closedAt,
-      '"'+obs+'"'
-    ].join(';');
-  });
-  var csv = BOM + headers.join(';') + '
-' + rows.join('
-');
-  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url;
-  var now = new Date();
-  var fname = 'pendencias_'+now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'.csv';
-  a.download = fname;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  toast('Exportado: '+fname,'ok');
-}
-
 // Confirm before closing/checking a pending item
 function confirmClose(id, cb){
   var p = pend.find(function(x){ return x.id===id; });
   if(!p) return;
-  if(!cb.checked){
-    p.done=false; p.closedAt=null;
-    save(); renderToday();
-    if(document.getElementById('view-pendencias').classList.contains('active')) renderPend();
-    return;
-  }
-  cb.checked = false;
+  // If unchecking, just do it
+  if(!cb.checked){ p.done=false; save(); renderToday(); if(document.getElementById('view-pendencias').classList.contains('active')) renderPend(); return; }
+  // Confirm before marking done
+  cb.checked = false; // revert visually until confirmed
   showConfirm(
     'Encerrar pendência?',
-    '"'+p.title+'"',
-    function(obs){
+    '"'+p.title+'" será marcada como concluída.',
+    function(){
       p.done = true;
-      p.obs = obs || '';
-      p.closedAt = new Date().toISOString();
       save(); renderToday();
       if(document.getElementById('view-pendencias').classList.contains('active')) renderPend();
-      toast('Pendência concluída!','ok');
-    },
-    true // show obs field
+    }
   );
 }
 
@@ -812,23 +756,18 @@ function confirmDelete(id){
 
 // Show confirm modal
 var confirmCallback = null;
-function showConfirm(title, msg, cb, showObs){
+function showConfirm(title, msg, cb){
   confirmCallback = cb;
   document.getElementById('confirm-title').textContent = title;
   document.getElementById('confirm-msg').textContent = msg;
-  document.getElementById('confirm-obs').value = '';
-  document.getElementById('confirm-obs-wrap').style.display = showObs ? 'block' : 'none';
-  document.getElementById('confirm-ok').textContent = showObs ? 'Concluir pendência' : 'Confirmar';
   document.getElementById('m-confirm').classList.add('show');
-  if(showObs) setTimeout(function(){ document.getElementById('confirm-obs').focus(); }, 100);
 }
 function closeConfirm(){
   confirmCallback = null;
   document.getElementById('m-confirm').classList.remove('show');
 }
 document.getElementById('confirm-ok').addEventListener('click', function(){
-  var obs = document.getElementById('confirm-obs').value.trim();
-  if(confirmCallback) confirmCallback(obs);
+  if(confirmCallback) confirmCallback();
   closeConfirm();
 });
 
@@ -1156,17 +1095,17 @@ window.addEventListener('message', function(e){
 });
 
 // ── INIT ──────────────────────────────────────────────────
+handleRedirect(); // saves token to conn, does NOT render
 buildSb();
 buildSelects();
 renderToday();
 document.getElementById('tt').innerHTML = 'Hoje <span>'+fmtLbl()+'</span>';
-handleRedirect(); // AFTER full init - saves token and shows toast
+// Show success toast if just connected
 var justConn = localStorage.getItem('csh_just_connected');
 if(justConn){
   localStorage.removeItem('csh_just_connected');
   var justA = CONFIG.ACCOUNTS.find(function(x){ return x.id===justConn; });
   toast((justA?justA.label:'Conta')+' conectada com sucesso!','ok');
-  buildSb(); renderToday();
 }
 </script>
 </body>
