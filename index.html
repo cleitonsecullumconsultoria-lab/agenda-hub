@@ -239,22 +239,19 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinning{animation:spin 1s linear infinite;display:inline-block}
 
-/* FILTROS */
 .fbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px;flex-wrap:wrap}
 .fgrp{display:flex;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:3px;gap:2px}
 .fbt{background:none;border:none;padding:5px 12px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;color:var(--t2);font-family:var(--ff);transition:all .15s;white-space:nowrap}
 .fbt:hover{color:var(--t);background:var(--bg4)}
 .fbt.on{background:var(--blue);color:#fff}
-/* OVERLAY MODAL */
 .cov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:600;display:none;align-items:center;justify-content:center;padding:16px}
 .cov.show{display:flex}
 .cbox{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rx);padding:24px;max-width:400px;width:100%;box-shadow:var(--sh);animation:fup .18s ease}
 .cbox h4{font-family:var(--fh);font-size:16px;font-weight:700;margin-bottom:6px}
 .cbox p{font-size:13px;color:var(--t2);margin-bottom:14px;line-height:1.6}
-/* TABELA RELATÓRIO */
 .rel-table{width:100%;border-collapse:collapse;font-size:12px}
 .rel-table th{text-align:left;padding:8px 6px;font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid var(--bd);white-space:nowrap}
-.rel-table td{padding:9px 6px;border-bottom:1px solid var(--bd);vertical-align:top}
+.rel-table td{padding:8px 6px;border-bottom:1px solid var(--bd);vertical-align:top}
 .rel-table tr:last-child td{border:none}
 </style>
 </head>
@@ -373,7 +370,7 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
         <select class="fi" id="p-fil" onchange="renderPend()" style="width:auto;flex:none;padding:5px 9px;font-size:11px;min-width:auto">
           <option value="todas">Todas</option><option value="alta">Alta</option><option value="abertas">Abertas</option><option value="concluidas">Concluídas</option>
         </select>
-        <button class="btn sm" onclick="exportExcel()">
+        <button class="btn sm" onclick="exportExcel(false)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Excel
         </button>
@@ -393,14 +390,10 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
           <select class="fi" id="rel-pr"><option value="todas">Todas</option><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></select></div>
         <div style="flex:1;min-width:110px"><div style="font-size:11px;color:var(--t3);margin-bottom:5px">Categoria</div>
           <select class="fi" id="rel-ca"><option value="todas">Todas</option><option value="fiscal">Fiscal</option><option value="financeiro">Financeiro</option><option value="contabil">Contábil</option><option value="rh">RH/CSC</option><option value="pessoal">Pessoal</option><option value="outros">Outros</option></select></div>
-        <div style="flex:1;min-width:110px"><div style="font-size:11px;color:var(--t3);margin-bottom:5px">De</div>
-          <input type="date" class="fi" id="rel-de"></div>
-        <div style="flex:1;min-width:110px"><div style="font-size:11px;color:var(--t3);margin-bottom:5px">Até</div>
-          <input type="date" class="fi" id="rel-at"></div>
-        <button class="btn pri" onclick="renderRel()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Filtrar</button>
-        <button class="btn" onclick="exportExcel(true)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Excel</button>
+        <div style="flex:1;min-width:110px"><div style="font-size:11px;color:var(--t3);margin-bottom:5px">De</div><input type="date" class="fi" id="rel-de"></div>
+        <div style="flex:1;min-width:110px"><div style="font-size:11px;color:var(--t3);margin-bottom:5px">Até</div><input type="date" class="fi" id="rel-at"></div>
+        <button class="btn pri" onclick="renderRel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Filtrar</button>
+        <button class="btn" onclick="exportExcel(true)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Excel</button>
       </div>
     </div>
     <div class="card">
@@ -408,7 +401,7 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
         <div class="ch" style="margin:0">Resultado</div>
         <span id="rel-count" style="font-size:11px;color:var(--t3)"></span>
       </div>
-      <div id="rel-body"></div>
+      <div id="rel-body" style="overflow-x:auto"></div>
     </div>
   </div>
 
@@ -465,7 +458,6 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
 
 <div class="toast" id="toast"></div>
 
-<!-- MODAL CONFIRMAR CONCLUSÃO -->
 <div class="cov" id="m-conf">
   <div class="cbox">
     <h4>Encerrar pendência?</h4>
@@ -479,7 +471,6 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
   </div>
 </div>
 
-<!-- MODAL CONFIRMAR EXCLUSÃO -->
 <div class="cov" id="m-del">
   <div class="cbox">
     <h4>Excluir pendência?</h4>
@@ -491,12 +482,10 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
   </div>
 </div>
 
-<!-- MODAL EDITAR PENDÊNCIA -->
 <div class="mbg" id="m-edit">
   <div class="mbox">
     <button class="ibt mclose" onclick="closeM('m-edit')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    <h3>Editar pendência</h3>
-    <p>Altere os dados e salve.</p>
+    <h3>Editar pendência</h3><p>Altere os dados e salve.</p>
     <input type="hidden" id="edit-id">
     <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:16px">
       <input type="text" class="fi" id="edit-tit" style="width:100%" placeholder="Descrição...">
@@ -511,7 +500,7 @@ html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--t);
     </div>
     <div style="display:flex;gap:8px">
       <button class="btn" onclick="closeM('m-edit')" style="flex:1">Cancelar</button>
-      <button class="btn pri" onclick="saveEdit()" style="flex:2">Salvar alterações</button>
+      <button class="btn pri" onclick="saveEdit()" style="flex:2">Salvar</button>
     </div>
   </div>
 </div>
@@ -586,6 +575,15 @@ var pend  = safeGet('csh_pend') || defPend();
 
 var MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 var WDAYS  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+// Filtros
+var _df='hoje', _pf='todas', _confId=null, _delId=null;
+function getRange(){
+  var s=new Date(TD),e=new Date(TD); s.setHours(0,0,0,0); e.setHours(23,59,59,999);
+  if(_df==='semana'){var d=TD.getDay();s=new Date(TD);s.setDate(TD.getDate()-d);s.setHours(0,0,0,0);e=new Date(s);e.setDate(s.getDate()+6);e.setHours(23,59,59,999);}
+  else if(_df==='mes'){s=new Date(TD.getFullYear(),TD.getMonth(),1);e=new Date(TD.getFullYear(),TD.getMonth()+1,0);e.setHours(23,59,59,999);}
+  else if(_df==='todos'){s=new Date(2000,0,1);e=new Date(2099,11,31);}
+  return {s:fd(s),e:fd(e)};
+}
 var dateFilter = 'hoje';
 var pendFilterHome = 'todas';
 
@@ -721,10 +719,8 @@ function visAccs(){
 
 function renderToday(){
   if(!evs || !pend) return;
-  var va = visAccs();
-  var range = getDateRange();
-
-  var te = evs.filter(function(e){ return e.date>=range.start && e.date<=range.end && va.includes(e.acc||'local'); });
+  var va=visAccs(), rng=getRange();
+  var te=evs.filter(function(e){return e.date>=rng.s&&e.date<=rng.e&&va.includes(e.acc||'local');});
   var op = pend.filter(function(p){ return !p.done; });
   var hi = pend.filter(function(p){ return p.prio==='alta' && !p.done; });
 
@@ -1200,40 +1196,14 @@ window.addEventListener('message', function(e){
   }
 });
 
-// ── NOVOS FILTROS E FUNCIONALIDADES ──────────────────────
-var _df = 'hoje';
-var _pf = 'todas';
-var _confId = null;
-var _delId  = null;
+// ── NOVAS FUNÇÕES ────────────────────────────────────────
+function setDF(f,btn){_df=f;document.querySelectorAll('#fgrp-data .fbt').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');renderToday();}
+function setPF(f,btn){_pf=f;document.querySelectorAll('#fgrp-pend .fbt').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');renderToday();}
 
-function setDF(f,btn){
-  _df=f;
-  document.querySelectorAll('#fgrp-data .fbt').forEach(function(b){b.classList.remove('on');});
-  btn.classList.add('on');
-  renderToday();
-}
-function setPF(f,btn){
-  _pf=f;
-  document.querySelectorAll('#fgrp-pend .fbt').forEach(function(b){b.classList.remove('on');});
-  btn.classList.add('on');
-  renderToday();
-}
-function getRange(){
-  var s=new Date(TD),e=new Date(TD);
-  s.setHours(0,0,0,0);e.setHours(23,59,59,999);
-  if(_df==='semana'){var d=TD.getDay();s=new Date(TD);s.setDate(TD.getDate()-d);s.setHours(0,0,0,0);e=new Date(s);e.setDate(s.getDate()+6);e.setHours(23,59,59,999);}
-  else if(_df==='mes'){s=new Date(TD.getFullYear(),TD.getMonth(),1);e=new Date(TD.getFullYear(),TD.getMonth()+1,0);e.setHours(23,59,59,999);}
-  else if(_df==='todos'){s=new Date(2000,0,1);e=new Date(2099,11,31);}
-  return {s:fd(s),e:fd(e)};
-}
-
-// ENCERRAR COM OBSERVAÇÃO
 function askClose(id,cb){
-  var p=pend.find(function(x){return x.id===id;});
-  if(!p) return;
+  var p=pend.find(function(x){return x.id===id;}); if(!p) return;
   if(!cb.checked){p.done=false;p.closedAt=null;save();renderToday();if(document.getElementById('view-pendencias').classList.contains('active'))renderPend();return;}
-  cb.checked=false;
-  _confId=id;
+  cb.checked=false;_confId=id;
   document.getElementById('conf-txt').textContent='"'+p.title+'"';
   document.getElementById('conf-obs').value='';
   document.getElementById('m-conf').classList.add('show');
@@ -1243,111 +1213,80 @@ function doConf(){
   if(!_confId) return;
   var p=pend.find(function(x){return x.id===_confId;});
   if(p){p.done=true;p.obs=document.getElementById('conf-obs').value.trim();p.closedAt=new Date().toISOString();}
-  document.getElementById('m-conf').classList.remove('show');
-  _confId=null;
-  save();renderToday();
-  if(document.getElementById('view-pendencias').classList.contains('active'))renderPend();
+  document.getElementById('m-conf').classList.remove('show');_confId=null;
+  save();renderToday();if(document.getElementById('view-pendencias').classList.contains('active'))renderPend();
   toast('Pendência concluída!','ok');
 }
-
-// EXCLUIR COM CONFIRMAÇÃO
 function askDel(id){
-  var p=pend.find(function(x){return x.id===id;});
-  if(!p) return;
-  _delId=id;
-  document.getElementById('del-txt').textContent='"'+p.title+'"';
+  var p=pend.find(function(x){return x.id===id;}); if(!p) return;
+  _delId=id;document.getElementById('del-txt').textContent='"'+p.title+'"';
   document.getElementById('m-del').classList.add('show');
 }
 function doDel(){
   if(!_delId) return;
-  pend=pend.filter(function(p){return p.id!==_delId;});
-  _delId=null;
+  pend=pend.filter(function(p){return p.id!==_delId;});_delId=null;
   document.getElementById('m-del').classList.remove('show');
-  save();renderPend();renderToday();
-  toast('Pendência excluída','info');
+  save();renderPend();renderToday();toast('Pendência excluída','info');
 }
-
-// EDITAR
 function openEdit(id){
-  var p=pend.find(function(x){return x.id===id;});
-  if(!p) return;
+  var p=pend.find(function(x){return x.id===id;}); if(!p) return;
   document.getElementById('edit-id').value=p.id;
   document.getElementById('edit-tit').value=p.title;
   document.getElementById('edit-prio').value=p.prio;
   document.getElementById('edit-cat').value=p.cat;
   document.getElementById('edit-dat').value=p.date||'';
   var sel=document.getElementById('edit-acc');
-  sel.innerHTML='<option value="local">Pessoal</option>'+
-    CONFIG.ACCOUNTS.map(function(a){return '<option value="'+a.id+'"'+(p.acc===a.id?' selected':'')+'>'+a.label+'</option>';}).join('');
+  sel.innerHTML='<option value="local">Pessoal</option>'+CONFIG.ACCOUNTS.map(function(a){return '<option value="'+a.id+'"'+(p.acc===a.id?' selected':'')+'>'+a.label+'</option>';}).join('');
   if(p.acc==='local') sel.value='local';
   openM('m-edit');
 }
 function saveEdit(){
   var id=parseInt(document.getElementById('edit-id').value);
-  var p=pend.find(function(x){return x.id===id;});
-  if(!p) return;
+  var p=pend.find(function(x){return x.id===id;}); if(!p) return;
   p.title=document.getElementById('edit-tit').value.trim()||p.title;
   p.prio=document.getElementById('edit-prio').value;
   p.cat=document.getElementById('edit-cat').value;
   p.date=document.getElementById('edit-dat').value;
   p.acc=document.getElementById('edit-acc').value;
-  save();closeM('m-edit');renderPend();renderToday();
-  toast('Pendência atualizada!','ok');
+  save();closeM('m-edit');renderPend();renderToday();toast('Atualizado!','ok');
 }
-
-// RELATÓRIO
 function filterRel(){
-  var rs=document.getElementById('rel-st').value;
-  var rp=document.getElementById('rel-pr').value;
-  var rc=document.getElementById('rel-ca').value;
-  var rd=document.getElementById('rel-de').value;
-  var ra=document.getElementById('rel-at').value;
+  var rs=document.getElementById('rel-st').value,rp=document.getElementById('rel-pr').value;
+  var rc=document.getElementById('rel-ca').value,rd=document.getElementById('rel-de').value,ra=document.getElementById('rel-at').value;
   return pend.filter(function(p){
-    if(rs==='abertas'&&p.done) return false;
-    if(rs==='concluidas'&&!p.done) return false;
-    if(rp!=='todas'&&p.prio!==rp) return false;
-    if(rc!=='todas'&&p.cat!==rc) return false;
-    if(rd&&p.date&&p.date<rd) return false;
-    if(ra&&p.date&&p.date>ra) return false;
+    if(rs==='abertas'&&p.done)return false;if(rs==='concluidas'&&!p.done)return false;
+    if(rp!=='todas'&&p.prio!==rp)return false;if(rc!=='todas'&&p.cat!==rc)return false;
+    if(rd&&p.date&&p.date<rd)return false;if(ra&&p.date&&p.date>ra)return false;
     return true;
   }).sort(function(a,b){var o={alta:0,media:1,baixa:2};return((a.done?10:0)+o[a.prio])-((b.done?10:0)+o[b.prio]);});
 }
 function renderRel(){
   var list=filterRel();
   document.getElementById('rel-count').textContent=list.length+' registro(s)';
-  if(!list.length){document.getElementById('rel-body').innerHTML='<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>Nenhum registro encontrado</div>';return;}
-  var pl={alta:'Alta',media:'Média',baixa:'Baixa'};
-  var pc={alta:'var(--red)',media:'var(--amber)',baixa:'var(--green)'};
-  var h='<table class="rel-table"><thead><tr>'+
-    '<th>Título</th><th>Prioridade</th><th>Categoria</th><th>Conta</th>'+
-    '<th>Prazo</th><th>Status</th><th>Dt.Conclusão</th><th>Observação</th>'+
-    '</tr></thead><tbody>';
+  if(!list.length){document.getElementById('rel-body').innerHTML='<div class="empty">Nenhum registro encontrado</div>';return;}
+  var pl={alta:'Alta',media:'Média',baixa:'Baixa'},pc={alta:'var(--red)',media:'var(--amber)',baixa:'var(--green)'};
+  var h='<table class="rel-table"><thead><tr><th>Título</th><th>Prior.</th><th>Cat.</th><th>Conta</th><th>Prazo</th><th>Status</th><th>Conclusão</th><th>Observação</th></tr></thead><tbody>';
   list.forEach(function(p){
     var lbl=p.acc?(AM[p.acc]?AM[p.acc].label:p.acc):'Pessoal';
-    h+='<tr>'+
-      '<td style="max-width:200px"><div style="'+(p.done?'text-decoration:line-through;color:var(--t3);':'')+' white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px" title="'+p.title+'">'+p.title+'</div></td>'+
+    h+='<tr style="background:'+(p.done?'var(--bg3)':'var(--bg2)')+'">'+
+      '<td style="max-width:200px"><div style="'+(p.done?'text-decoration:line-through;color:var(--t3);':'')+'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px" title="'+p.title+'">'+p.title+'</div></td>'+
       '<td><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;background:'+pc[p.prio]+'22;color:'+pc[p.prio]+'">'+pl[p.prio]+'</span></td>'+
       '<td style="color:var(--t2)">'+p.cat+'</td>'+
       '<td><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;background:'+(p.acc&&AM[p.acc]?AM[p.acc].soft:'var(--bg4)')+';color:'+(p.acc&&AM[p.acc]?AM[p.acc].color:'var(--t2)')+'">'+lbl+'</span></td>'+
       '<td style="font-family:var(--fm);white-space:nowrap">'+dp(p.date)+'</td>'+
       '<td><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;background:'+(p.done?'var(--gs)':'var(--bs)')+';color:'+(p.done?'var(--green)':'var(--blue)')+'>'+(p.done?'Concluída':'Aberta')+'</span></td>'+
       '<td style="font-family:var(--fm);white-space:nowrap;color:var(--t3)">'+(p.closedAt?p.closedAt.slice(0,10):'')+'</td>'+
-      '<td style="font-size:11px;color:var(--t2);max-width:180px">'+(p.obs||'')+'</td>'+
-    '</tr>';
+      '<td style="font-size:11px;color:var(--t2);max-width:180px">'+(p.obs||'')+'</td></tr>';
   });
   document.getElementById('rel-body').innerHTML=h+'</tbody></table>';
 }
 function exportExcel(fromRel){
-  var list = fromRel ? filterRel() : pend;
+  var list=fromRel?filterRel():pend;
   var BOM='﻿';
   var hdr=['ID','Título','Prioridade','Categoria','Conta','Data Prazo','Status','Data Conclusão','Observação'].join(';');
   var rows=list.map(function(p){
     var lbl=p.acc?(AM[p.acc]?AM[p.acc].label:p.acc):'Pessoal';
-    return [p.id,'"'+(p.title||'').replace(/"/g,'""')+'"',
-      p.prio==='alta'?'Alta':p.prio==='media'?'Média':'Baixa',
-      p.cat,lbl,p.date||'',p.done?'Concluída':'Aberta',
-      p.closedAt?p.closedAt.slice(0,10):'',
-      '"'+(p.obs||'').replace(/"/g,'""')+'"'].join(';');
+    return [p.id,'"'+(p.title||'').replace(/"/g,'""')+'"',p.prio==='alta'?'Alta':p.prio==='media'?'Média':'Baixa',p.cat,lbl,p.date||'',p.done?'Concluída':'Aberta',p.closedAt?p.closedAt.slice(0,10):'','"'+(p.obs||'').replace(/"/g,'""')+'"'].join(';');
   });
   var csv=BOM+hdr+'
 '+rows.join('
@@ -1355,10 +1294,8 @@ function exportExcel(fromRel){
   var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');a.href=url;
-  var now=new Date();
-  a.download='pendencias_'+now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'.csv';
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  var now=new Date();a.download='pendencias_'+now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'.csv';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
   toast('Exportado!','ok');
 }
 
